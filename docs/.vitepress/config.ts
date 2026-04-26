@@ -97,8 +97,8 @@ export default defineConfig({
     nav: [
       { text: 'Guide', link: '/getting-started' },
       { text: 'API', link: '/api/ol' },
-      { text: 'Author', link: authorSite },
       { text: 'GitHub', link: 'https://github.com/sanderdesnaijer/map-gesture-controls' },
+      { text: 'Author', link: authorSite },
     ],
     sidebar: [
       {
