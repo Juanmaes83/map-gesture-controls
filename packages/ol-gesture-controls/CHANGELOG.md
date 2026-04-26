@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/sanderdesnaijer/map-gesture-controls/compare/ol-v0.3.0...ol-v0.4.0) (2026-04-26)
+
+
+### Features
+
+* **leaflet:** add Leaflet gesture controls ([3613cc0](https://github.com/sanderdesnaijer/map-gesture-controls/commit/3613cc0d01830b98e95594121715592cadf9bd1d))
+
+
+### Bug Fixes
+
+* (leaflet) continuous zoom settle lifecycle and default pan scale; sync docs ([7625f8a](https://github.com/sanderdesnaijer/map-gesture-controls/commit/7625f8a01233913a8b9bbe8ab7fff06228c1d066))
+
 ## [0.3.0](https://github.com/sanderdesnaijer/map-gesture-controls/compare/ol-v0.2.2...ol-v0.3.0) (2026-04-12)
 
 
