@@ -30,3 +30,124 @@
   background: var(--vp-c-brand-soft);
   color: var(--vp-c-brand-2);
 }
+
+/* ── Map Libraries Section ── */
+
+.map-libraries-section {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 2rem 24px 4rem;
+}
+
+.map-libraries-heading {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.map-libraries-section > p {
+  text-align: center;
+  color: var(--vp-c-text-2);
+  max-width: 640px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+.map-library-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.map-library-card {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  padding: 1.75rem;
+  background: var(--vp-c-bg-soft);
+  transition: border-color 0.25s, box-shadow 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-library-card:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 2px 12px rgba(100, 108, 255, 0.08);
+}
+
+.map-library-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.map-library-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.map-library-card p {
+  color: var(--vp-c-text-2);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin: 0 0 1rem;
+  flex-grow: 1;
+}
+
+.map-library-card code {
+  display: block;
+  background: var(--vp-c-bg-alt);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--vp-c-text-1);
+  margin-bottom: 1.25rem;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.map-library-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.map-library-link {
+  display: inline-block;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 6px;
+  text-decoration: none;
+  border: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-2);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.map-library-link:hover {
+  color: var(--vp-c-brand-1);
+  border-color: var(--vp-c-brand-1);
+}
+
+.map-library-link.primary {
+  background: var(--vp-c-brand-1);
+  color: var(--vp-c-white);
+  border-color: var(--vp-c-brand-1);
+}
+
+.map-library-link.primary:hover {
+  background: var(--vp-c-brand-2);
+  border-color: var(--vp-c-brand-2);
+  color: var(--vp-c-white);
+}
+
+@media (max-width: 768px) {
+  .map-library-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .map-libraries-heading {
+    font-size: 1.4rem;
+  }
+}
