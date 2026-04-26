@@ -11,7 +11,13 @@
 
 Try it live at **[sanderdesnaijer.github.io/map-gesture-controls](https://sanderdesnaijer.github.io/map-gesture-controls/)**
 
-<!-- GIF placeholder -->
+<p align="center">
+    <img
+      src="https://raw.githubusercontent.com/sanderdesnaijer/map-gesture-controls/main/docs/public/leaflet-map-gesture-controls-demo.gif"
+      alt="Leaflet map gesture controls demo with webcam overlay where the user pans, zooms, and rotates the map using hand gestures."
+      width="720"
+  />
+</p>
 
 ## Install
 
@@ -65,13 +71,13 @@ document.getElementById("stop-btn")!.addEventListener("click", () => {
 
 Both **fist** and **pinch** (thumb and index finger touching) trigger the same actions, use whichever feels more comfortable.
 
-| Gesture | How to perform | Map action |
-| --- | --- | --- |
-| **Pan** | Left fist or pinch, move hand in any direction | Drags the map |
-| **Zoom** | Right fist or pinch, move hand up or down | Zooms in (up) or out (down) |
-| **Rotate** | Both hands fist or pinch, tilt wrists clockwise or counter-clockwise | Rotates the map |
-| **Reset** | Bring both hands together (pray/namaste), hold 1 second | Resets pan, zoom, and rotation to initial state |
-| **Idle** | Any other hand position | Map stays still |
+| Gesture    | How to perform                                                       | Map action                                      |
+| ---------- | -------------------------------------------------------------------- | ----------------------------------------------- |
+| **Pan**    | Left fist or pinch, move hand in any direction                       | Drags the map                                   |
+| **Zoom**   | Right fist or pinch, move hand up or down                            | Zooms in (up) or out (down)                     |
+| **Rotate** | Both hands fist or pinch, tilt wrists clockwise or counter-clockwise | Rotates the map                                 |
+| **Reset**  | Bring both hands together (pray/namaste), hold 1 second              | Resets pan, zoom, and rotation to initial state |
+| **Idle**   | Any other hand position                                              | Map stays still                                 |
 
 Rotation is implemented via CSS transforms on a dedicated pane inside `.leaflet-map-pane` since Leaflet core has no native rotation API. Only tile and overlay panes rotate; marker, shadow, tooltip, and popup panes remain axis-aligned.
 
@@ -104,11 +110,11 @@ See the [full configuration reference](https://sanderdesnaijer.github.io/map-ges
 
 This package re-exports the entire [`@map-gesture-controls/core`](https://www.npmjs.com/package/@map-gesture-controls/core) API, so you only need one import. On top of core, it adds:
 
-| Export | Type | Description |
-| --- | --- | --- |
-| `GestureMapController` | Class | High-level controller that wires gesture detection to a Leaflet map |
-| `LeafletGestureInteraction` | Class | Low-level Leaflet interaction for custom setups |
-| `GestureMapControllerConfig` | Type | Configuration interface |
+| Export                       | Type  | Description                                                         |
+| ---------------------------- | ----- | ------------------------------------------------------------------- |
+| `GestureMapController`       | Class | High-level controller that wires gesture detection to a Leaflet map |
+| `LeafletGestureInteraction`  | Class | Low-level Leaflet interaction for custom setups                     |
+| `GestureMapControllerConfig` | Type  | Configuration interface                                             |
 
 ## Use cases
 
@@ -125,11 +131,11 @@ This package re-exports the entire [`@map-gesture-controls/core`](https://www.np
 
 ## Related packages
 
-| Package | Description |
-| --- | --- |
-| [`@map-gesture-controls/core`](https://www.npmjs.com/package/@map-gesture-controls/core) | Map-agnostic gesture detection engine (included in this package) |
-| [`@map-gesture-controls/google-maps`](https://www.npmjs.com/package/@map-gesture-controls/google-maps) | Google Maps integration |
-| [`@map-gesture-controls/ol`](https://www.npmjs.com/package/@map-gesture-controls/ol) | OpenLayers integration |
+| Package                                                                                                | Description                                                      |
+| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| [`@map-gesture-controls/core`](https://www.npmjs.com/package/@map-gesture-controls/core)               | Map-agnostic gesture detection engine (included in this package) |
+| [`@map-gesture-controls/google-maps`](https://www.npmjs.com/package/@map-gesture-controls/google-maps) | Google Maps integration                                          |
+| [`@map-gesture-controls/ol`](https://www.npmjs.com/package/@map-gesture-controls/ol)                   | OpenLayers integration                                           |
 
 ## Documentation
 
