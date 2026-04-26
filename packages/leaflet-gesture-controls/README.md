@@ -24,24 +24,25 @@ npm install -D @types/leaflet
 ## Usage
 
 ```ts
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import { GestureMapController } from '@map-gesture-controls/leaflet';
-import '@map-gesture-controls/leaflet/style.css';
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { GestureMapController } from "@map-gesture-controls/leaflet";
+import "@map-gesture-controls/leaflet/style.css";
 
-const map = L.map('map').setView([52.37, 4.9], 10);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+const map = L.map("map").setView([52.37, 4.9], 10);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
 const controller = new GestureMapController({ map });
 
 // Must be called from a user gesture (e.g. button click) for webcam permission
-document.getElementById('start-btn')!.addEventListener('click', async () => {
+document.getElementById("start-btn")!.addEventListener("click", async () => {
   await controller.start();
 });
 
-document.getElementById('stop-btn')!.addEventListener('click', () => {
+document.getElementById("stop-btn")!.addEventListener("click", () => {
   controller.stop();
 });
 ```
@@ -54,7 +55,7 @@ document.getElementById('stop-btn')!.addEventListener('click', () => {
 const controller = new GestureMapController({
   map,
   webcam: {
-    position: 'bottom-left',
+    position: "bottom-left",
     width: 200,
     height: 150,
     opacity: 0.6,
@@ -73,23 +74,23 @@ See the [full configuration reference](https://sanderdesnaijer.github.io/map-ges
 
 ## Gestures
 
-| Gesture | Action |
-| --- | --- |
-| Left hand fist or pinch, move hand | Pan the map |
-| Right hand fist or pinch, move up/down | Zoom in/out |
-| Both hands fist or pinch, tilt wrists | Rotate the map |
-| Both hands together (pray), hold 1s | Reset view |
+| Gesture                                | Action         |
+| -------------------------------------- | -------------- |
+| Left hand fist or pinch, move hand     | Pan the map    |
+| Right hand fist or pinch, move up/down | Zoom in/out    |
+| Both hands fist or pinch, tilt wrists  | Rotate the map |
+| Both hands together (pray), hold 1s    | Reset view     |
 
 Rotation is implemented via CSS transforms on the map pane since Leaflet core has no native rotation API. Pan direction is automatically adjusted to match the rotated view.
 
 ## Browser support
 
-| Browser | Support |
-| --- | --- |
-| Chrome 111+ | Full support |
-| Edge 111+ | Full support |
+| Browser      | Support      |
+| ------------ | ------------ |
+| Chrome 111+  | Full support |
+| Edge 111+    | Full support |
 | Firefox 115+ | Full support |
-| Safari 17+ | Full support |
+| Safari 17+   | Full support |
 
 Requirements: **WebGL**, **getUserMedia** (webcam access), and **WASM** (MediaPipe hand landmarker model, ~10 MB, loaded on first `start()` call).
 

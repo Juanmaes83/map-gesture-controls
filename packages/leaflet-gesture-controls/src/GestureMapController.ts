@@ -1,4 +1,9 @@
-import type { GestureFrame, HandLandmark, WebcamConfig, TuningConfig } from '@map-gesture-controls/core';
+import type {
+  GestureFrame,
+  HandLandmark,
+  WebcamConfig,
+  TuningConfig,
+} from "@map-gesture-controls/core";
 import {
   DEFAULT_WEBCAM_CONFIG,
   DEFAULT_TUNING_CONFIG,
@@ -6,9 +11,9 @@ import {
   GestureController,
   GestureStateMachine,
   WebcamOverlay,
-} from '@map-gesture-controls/core';
-import type { GestureMapControllerConfig } from './types.js';
-import { LeafletGestureInteraction } from './LeafletGestureInteraction.js';
+} from "@map-gesture-controls/core";
+import type { GestureMapControllerConfig } from "./types.js";
+import { LeafletGestureInteraction } from "./LeafletGestureInteraction.js";
 
 /**
  * GestureMapController
@@ -24,7 +29,12 @@ import { LeafletGestureInteraction } from './LeafletGestureInteraction.js';
  *   ctrl.stop();
  */
 export class GestureMapController {
-  private config: { map: GestureMapControllerConfig['map']; webcam: WebcamConfig; tuning: TuningConfig; debug: boolean };
+  private config: {
+    map: GestureMapControllerConfig["map"];
+    webcam: WebcamConfig;
+    tuning: TuningConfig;
+    debug: boolean;
+  };
   private gestureController: GestureController;
   private stateMachine: GestureStateMachine;
   private overlay: WebcamOverlay;
@@ -89,14 +99,20 @@ export class GestureMapController {
       this.renderLoop();
 
       // Pause when tab is hidden to save resources
-      document.addEventListener('visibilitychange', this.handleVisibilityChange);
+      document.addEventListener(
+        "visibilitychange",
+        this.handleVisibilityChange,
+      );
     } catch (error) {
       this.overlay.unmount();
       this.gestureController.destroy();
       this.resetTransientState();
       this.started = false;
       this.paused = false;
-      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+      document.removeEventListener(
+        "visibilitychange",
+        this.handleVisibilityChange,
+      );
       throw error;
     }
   }
@@ -114,7 +130,10 @@ export class GestureMapController {
       cancelAnimationFrame(this.rafHandle);
       this.rafHandle = null;
     }
-    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    document.removeEventListener(
+      "visibilitychange",
+      this.handleVisibilityChange,
+    );
     this.started = false;
     this.paused = false;
   }
@@ -138,13 +157,13 @@ export class GestureMapController {
     this.rafHandle = requestAnimationFrame(() => this.renderLoop());
 
     if (this.paused) {
-      this.overlay.render(null, 'idle');
+      this.overlay.render(null, "idle");
       return;
     }
 
     const frame = this.lastFrame;
     if (frame === null) {
-      this.overlay.render(null, 'idle');
+      this.overlay.render(null, "idle");
       return;
     }
 
@@ -156,10 +175,10 @@ export class GestureMapController {
     const resetPoseActive =
       !!leftHand &&
       !!rightHand &&
-      leftHand.gesture !== 'fist' &&
-      leftHand.gesture !== 'pinch' &&
-      rightHand.gesture !== 'fist' &&
-      rightHand.gesture !== 'pinch' &&
+      leftHand.gesture !== "fist" &&
+      leftHand.gesture !== "pinch" &&
+      rightHand.gesture !== "fist" &&
+      rightHand.gesture !== "pinch" &&
       this.isPrayPose(leftHand.landmarks, rightHand.landmarks);
 
     if (resetPoseActive) {
@@ -173,7 +192,9 @@ export class GestureMapController {
       resetProgress = Math.min(1, elapsed / this.resetPoseDurationMs);
       if (!this.resetPoseTriggered && resetProgress >= 1) {
         this.resetPoseTriggered = true;
-        this.config.map.setView(this.initialCenter, this.initialZoom, { animate: false });
+        this.config.map.setView(this.initialCenter, this.initialZoom, {
+          animate: false,
+        });
         this.interaction.setBearing(this.initialBearing);
         this.interaction.syncFromMap();
       }
@@ -181,7 +202,10 @@ export class GestureMapController {
       // Pose dropped -- start grace period before resetting the timer
       if (this.resetPoseGraceTimer === null) {
         this.resetPoseGraceTimer = timestamp;
-      } else if (timestamp - this.resetPoseGraceTimer >= this.resetPoseGraceMs) {
+      } else if (
+        timestamp - this.resetPoseGraceTimer >=
+        this.resetPoseGraceMs
+      ) {
         this.resetPoseStart = null;
         this.resetPoseTriggered = false;
         this.resetPoseGraceTimer = null;
@@ -236,7 +260,7 @@ export class GestureMapController {
   private logDebug(mode: string, frame: GestureFrame): void {
     const hands = frame.hands
       .map((h) => `${h.handedness}:${h.gesture}(${h.score.toFixed(2)})`)
-      .join(' ');
+      .join(" ");
     console.debug(`[leaflet-gestures] mode=${mode} ${hands}`);
   }
 }

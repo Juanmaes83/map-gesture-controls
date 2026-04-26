@@ -1,11 +1,26 @@
-import type { Map as LeafletMap } from 'leaflet';
+import type { Bounds, LatLng, Map as LeafletMap, Point } from 'leaflet';
 import type { StateMachineOutput } from '@map-gesture-controls/core';
 
-type BufferedGridLayer = {
+type PositionedPane = HTMLElement & {
+  _leaflet_pos?: {
+    x: number;
+    y: number;
+  };
+};
+
+type InternalLeafletMap = LeafletMap & {
+  _move: (center: LatLng, zoom: number, data: Record<string, unknown>) => void;
+};
+
+type RotatableGridLayer = {
   options?: {
     keepBuffer?: number;
   };
   redraw?: () => void;
+  _tileZoom?: number;
+  _getTiledPixelBounds?: (center: LatLng) => Bounds;
+  _mgcOriginalGetTiledPixelBounds?: (center: LatLng) => Bounds;
+  _onMoveEnd?: () => void;
 };
 
 /**
@@ -18,14 +33,15 @@ type BufferedGridLayer = {
  * Zoom:   right fist wrist vertical delta -> zoom level change (up = in, down = out).
  *         Respects map min/max zoom. Uses setZoom() with { animate: false } to avoid
  *         competing animations when called every frame.
- * Rotate: CSS transform on a dedicated rotate-pane wrapper div that wraps .leaflet-map-pane.
- *         We cannot rotate .leaflet-map-pane directly because Leaflet's panBy overwrites its
- *         transform with translate3d on every update. The wrapper div is invisible to Leaflet
- *         so our rotation persists independently. Pan deltas are counter-rotated by the current
- *         bearing so screen direction always matches the user's hand movement.
+ * Rotate: CSS transform on a dedicated rotate-pane inside .leaflet-map-pane.
+ *         We cannot rotate .leaflet-map-pane directly because Leaflet's panBy
+ *         overwrites its transform with translate3d on every update. Tile
+ *         bounds are expanded from the rotated viewport corners so side tiles
+ *         are loaded before they enter view.
  */
 export class LeafletGestureInteraction {
   private static readonly minRotationTileBuffer = 8;
+  private static readonly tileRefreshBearingStep = 5;
 
   private map: LeafletMap;
   private panScale = 2.0;
@@ -40,14 +56,32 @@ export class LeafletGestureInteraction {
   // Track bearing (degrees, clockwise from north) for CSS rotation.
   private currentBearing = 0;
 
-  // Wrapper div that holds the rotation transform. Sits between the map container
-  // and .leaflet-map-pane so Leaflet's own transforms don't overwrite ours.
+  // Pane that holds the rotation transform. It sits inside .leaflet-map-pane
+  // so Leaflet's pan transform remains independent from our rotation.
   private rotatePaneEl: HTMLElement | null = null;
+  private rotatedPanes: HTMLElement[] = [];
+  private patchedGridLayers = new Set<RotatableGridLayer>();
   private tileBufferPrepared = false;
+  private lastTileRefreshBearing: number | null = null;
+
+  /** rAF id so we coalesce many Leaflet "move" events to one pivot update per frame. */
+  private refreshPivotRaf: number | null = null;
+
+  /** Leaflet "move" fires whenever the view changes (pan, zoom, program moves). The rotation transform-origin
+   * depends on the map panes position, so it must be updated after pan, not only when the bearing changes. */
+  private readonly onMapMove = (): void => {
+    if (!this.rotatePaneEl) return;
+    if (this.refreshPivotRaf !== null) return;
+    this.refreshPivotRaf = requestAnimationFrame(() => {
+      this.refreshPivotRaf = null;
+      this.applyRotationTransform();
+    });
+  };
 
   constructor(map: LeafletMap) {
     this.map = map;
     this.currentZoom = map.getZoom();
+    map.on('move', this.onMapMove);
   }
 
   /**
@@ -101,33 +135,94 @@ export class LeafletGestureInteraction {
    * Converts to degrees and accumulates in currentBearing.
    */
   private rotate(delta: number): void {
-    this.prepareTileBufferForRotation();
-
     this.currentBearing += (delta * 180) / Math.PI;
     // Normalise to 0-360 range
     this.currentBearing = ((this.currentBearing % 360) + 360) % 360;
 
+    this.prepareGridLayersForRotation();
     this.applyRotationTransform();
+    this.refreshGridLayersForRotation();
   }
 
   /**
    * Leaflet's tile range is based on the unrotated viewport. Rotation can expose
-   * diagonal side areas, so keep extra surrounding tiles loaded before rotating.
+   * diagonal side areas, so grid layers need bounds based on the rotated corners.
    */
-  private prepareTileBufferForRotation(): void {
+  private prepareGridLayersForRotation(): void {
     if (this.tileBufferPrepared) return;
 
     this.map.eachLayer((layer) => {
-      const gridLayer = layer as BufferedGridLayer;
+      const gridLayer = layer as RotatableGridLayer;
       const currentBuffer = gridLayer.options?.keepBuffer;
-      if (currentBuffer === undefined) return;
-      if (currentBuffer >= LeafletGestureInteraction.minRotationTileBuffer) return;
+      if (currentBuffer !== undefined && currentBuffer < LeafletGestureInteraction.minRotationTileBuffer) {
+        gridLayer.options!.keepBuffer = LeafletGestureInteraction.minRotationTileBuffer;
+      }
 
-      gridLayer.options!.keepBuffer = LeafletGestureInteraction.minRotationTileBuffer;
-      gridLayer.redraw?.();
+      if (!gridLayer._getTiledPixelBounds || gridLayer._mgcOriginalGetTiledPixelBounds) return;
+
+      gridLayer._mgcOriginalGetTiledPixelBounds = gridLayer._getTiledPixelBounds;
+      gridLayer._getTiledPixelBounds = (center) => this.getRotatedTiledPixelBounds(gridLayer, center);
+      this.patchedGridLayers.add(gridLayer);
     });
 
     this.tileBufferPrepared = true;
+  }
+
+  private getRotatedTiledPixelBounds(layer: RotatableGridLayer, center: LatLng): Bounds {
+    const originalBounds = layer._mgcOriginalGetTiledPixelBounds!.call(layer, center);
+    if (!this.currentBearing) return originalBounds;
+
+    const tileZoom = layer._tileZoom ?? this.map.getZoom();
+    const mapState = this.map as LeafletMap & {
+      _animatingZoom?: boolean;
+      _animateToZoom?: number;
+    };
+    const mapZoom = mapState._animatingZoom
+      ? Math.max(mapState._animateToZoom ?? this.map.getZoom(), this.map.getZoom())
+      : this.map.getZoom();
+    const scale = this.map.getZoomScale(mapZoom, tileZoom);
+    const pixelCenter = this.map.project(center, tileZoom).floor();
+    const size = this.map.getSize();
+    const bearingRad = (this.currentBearing * Math.PI) / 180;
+    const absCos = Math.abs(Math.cos(bearingRad));
+    const absSin = Math.abs(Math.sin(bearingRad));
+    const rotatedWidth = absCos * size.x + absSin * size.y;
+    const rotatedHeight = absSin * size.x + absCos * size.y;
+    const halfSize = size.multiplyBy(0);
+    halfSize.x = rotatedWidth / (scale * 2);
+    halfSize.y = rotatedHeight / (scale * 2);
+    const rotatedBounds = Object.create(Object.getPrototypeOf(originalBounds)) as Bounds & {
+      min: Point;
+      max: Point;
+    };
+
+    rotatedBounds.min = pixelCenter.subtract(halfSize);
+    rotatedBounds.max = pixelCenter.add(halfSize);
+    return rotatedBounds;
+  }
+
+  private refreshGridLayersForRotation(): void {
+    if (
+      this.lastTileRefreshBearing !== null &&
+      this.getBearingDelta(this.currentBearing, this.lastTileRefreshBearing) <
+        LeafletGestureInteraction.tileRefreshBearingStep
+    ) {
+      return;
+    }
+
+    this.patchedGridLayers.forEach((layer) => {
+      if (layer._onMoveEnd) {
+        layer._onMoveEnd();
+      } else {
+        layer.redraw?.();
+      }
+    });
+    this.lastTileRefreshBearing = this.currentBearing;
+  }
+
+  private getBearingDelta(a: number, b: number): number {
+    const diff = Math.abs(a - b) % 360;
+    return diff > 180 ? 360 - diff : diff;
   }
 
   /**
@@ -138,32 +233,44 @@ export class LeafletGestureInteraction {
   private applyRotationTransform(): void {
     const pane = this.getOrCreateRotatePane();
     if (!pane) return;
+    this.updateRotatePanePivot(pane);
     pane.style.transform = `rotate(${-this.currentBearing}deg)`;
   }
 
+  private updateRotatePanePivot(rotatePane: HTMLElement): void {
+    const mapPane = this.map.getPane('mapPane') as PositionedPane | undefined;
+    if (!mapPane) return;
+
+    const mapPanePos = mapPane._leaflet_pos ?? { x: 0, y: 0 };
+    const size = this.map.getSize();
+    rotatePane.style.transformOrigin = `${size.x / 2 - mapPanePos.x}px ${size.y / 2 - mapPanePos.y}px`;
+  }
+
   /**
-   * Lazily creates a wrapper div around .leaflet-map-pane that holds the rotation
-   * transform. We cannot rotate the map pane directly because Leaflet's panBy
-   * overwrites its transform with translate3d on every frame.
+   * Lazily creates a rotate pane inside .leaflet-map-pane. Leaflet continues to
+   * translate the map pane for panning while the tile and overlay panes keep a
+   * separate rotation transform.
    */
   private getOrCreateRotatePane(): HTMLElement | null {
     if (this.rotatePaneEl) return this.rotatePaneEl;
 
-    const container = this.map.getContainer() as HTMLElement;
     const mapPane = this.map.getPane('mapPane') as HTMLElement | undefined;
-    if (!container || !mapPane) return null;
+    const tilePane = this.map.getPane('tilePane') as HTMLElement | undefined;
+    const overlayPane = this.map.getPane('overlayPane') as HTMLElement | undefined;
+    if (!mapPane) return null;
 
     const rotatePane = document.createElement('div');
+
     rotatePane.className = 'leaflet-rotate-pane';
     rotatePane.style.position = 'absolute';
     rotatePane.style.top = '0';
     rotatePane.style.left = '0';
     rotatePane.style.width = '100%';
     rotatePane.style.height = '100%';
-    rotatePane.style.transformOrigin = '50% 50%';
 
-    container.insertBefore(rotatePane, mapPane);
-    rotatePane.appendChild(mapPane);
+    mapPane.insertBefore(rotatePane, tilePane ?? overlayPane ?? null);
+    this.rotatedPanes = [tilePane, overlayPane].filter((pane): pane is HTMLElement => !!pane);
+    this.rotatedPanes.forEach((pane) => rotatePane.appendChild(pane));
 
     this.rotatePaneEl = rotatePane;
     return rotatePane;
@@ -172,7 +279,8 @@ export class LeafletGestureInteraction {
   /**
    * Zoom map. delta > 0 = zoom in, delta < 0 = zoom out.
    * Clamps to map's min/max zoom levels.
-   * Uses setZoom with { animate: false } to prevent per-frame animation stacking.
+   * Uses _move with { round: false } so Leaflet CSS-scales existing tiles
+   * (blurry but visible) while new tiles load, matching pinch-zoom feel.
    */
   private zoom(delta: number): void {
     this.currentZoom += delta * this.zoomScale;
@@ -181,7 +289,7 @@ export class LeafletGestureInteraction {
     const maxZoom = this.map.getMaxZoom();
     this.currentZoom = Math.max(minZoom, Math.min(maxZoom, this.currentZoom));
 
-    this.map.setZoom(this.currentZoom, { animate: false });
+    (this.map as InternalLeafletMap)._move(this.map.getCenter(), this.currentZoom, { pinch: true, round: false });
   }
 
   /**
@@ -213,17 +321,30 @@ export class LeafletGestureInteraction {
    * Call when gesture control stops so the DOM is left in a clean state.
    */
   destroy(): void {
+    this.map.off('move', this.onMapMove);
+    if (this.refreshPivotRaf !== null) {
+      cancelAnimationFrame(this.refreshPivotRaf);
+      this.refreshPivotRaf = null;
+    }
     if (!this.rotatePaneEl) return;
 
-    const container = this.map.getContainer() as HTMLElement;
     const mapPane = this.map.getPane('mapPane') as HTMLElement | undefined;
 
-    if (mapPane && container) {
-      // insertBefore automatically detaches mapPane from rotatePaneEl first
-      container.insertBefore(mapPane, this.rotatePaneEl);
+    if (mapPane) {
+      this.rotatedPanes.forEach((pane) => mapPane.insertBefore(pane, this.rotatePaneEl));
     }
     this.rotatePaneEl.remove();
     this.rotatePaneEl = null;
+    this.rotatedPanes = [];
+    this.patchedGridLayers.forEach((layer) => {
+      if (layer._mgcOriginalGetTiledPixelBounds) {
+        layer._getTiledPixelBounds = layer._mgcOriginalGetTiledPixelBounds;
+        delete layer._mgcOriginalGetTiledPixelBounds;
+      }
+    });
+    this.patchedGridLayers.clear();
+    this.tileBufferPrepared = false;
+    this.lastTileRefreshBearing = null;
     this.currentBearing = 0;
   }
 }
