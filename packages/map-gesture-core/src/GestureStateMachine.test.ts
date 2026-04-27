@@ -381,6 +381,33 @@ describe('GestureStateMachine', () => {
     expect(out.rotateDelta).toBeNull();
   });
 
+  it('falls back to the default rotate deadzone when rotateDeadzoneRad is missing', () => {
+    // Simulate a JS consumer (or older persisted config) that omits the field.
+    // Without the runtime fallback, `Math.abs(delta) > undefined` is `> NaN`
+    // and every rotate delta is silently suppressed.
+    const { rotateDeadzoneRad: _omit, ...partial } = FAST_TUNING;
+    void _omit;
+    const fallbackFsm = new GestureStateMachine(partial as TuningConfig);
+    const lmL = makeLandmarks({ [LANDMARKS.WRIST]: { x: 0.2, y: 0.5, z: 0 } });
+    const lmR1 = makeLandmarks({ [LANDMARKS.WRIST]: { x: 0.8, y: 0.5, z: 0 } });
+    // tilt of ~0.165 rad — well above the default 0.005 fallback
+    const lmR2 = makeLandmarks({ [LANDMARKS.WRIST]: { x: 0.8, y: 0.6, z: 0 } });
+
+    for (let i = 0; i < 5; i++) {
+      fallbackFsm.update(
+        makeFrame(0, makeHand('fist', lmL), makeHand('fist', lmR1)),
+      );
+    }
+    fallbackFsm.update(
+      makeFrame(1, makeHand('fist', lmL), makeHand('fist', lmR1)),
+    );
+    const out = fallbackFsm.update(
+      makeFrame(2, makeHand('fist', lmL), makeHand('fist', lmR2)),
+    );
+
+    expect(out.rotateDelta).not.toBeNull();
+  });
+
   it('emits rotateDelta above the rotateDeadzoneRad threshold', () => {
     const deadzoneFsm = new GestureStateMachine({
       ...FAST_TUNING,

@@ -4,6 +4,7 @@ import type {
   TuningConfig,
   SmoothedPoint,
 } from './types.js';
+import { DEFAULT_TUNING_CONFIG } from './constants.js';
 
 export interface StateMachineOutput {
   mode: GestureMode;
@@ -279,7 +280,9 @@ export class GestureStateMachine {
         // ?? fallback guards JS consumers passing a tuning object that predates
         // rotateDeadzoneRad; without it, `> undefined` becomes `> NaN` and
         // suppresses every rotate delta.
-        const deadzone = this.tuning.rotateDeadzoneRad ?? 0.005;
+        const deadzone =
+          this.tuning.rotateDeadzoneRad ??
+          DEFAULT_TUNING_CONFIG.rotateDeadzoneRad;
         if (Math.abs(delta) > deadzone) {
           rotateDelta = delta;
         }
