@@ -274,7 +274,7 @@ export class GestureStateMachine {
         let delta = smoothAngle - this.prevRotateAngle;
         if (delta > Math.PI) delta -= 2 * Math.PI;
         if (delta < -Math.PI) delta += 2 * Math.PI;
-        if (Math.abs(delta) > 0.005) {
+        if (Math.abs(delta) > this.tuning.rotateDeadzoneRad) {
           rotateDelta = delta;
         }
       }

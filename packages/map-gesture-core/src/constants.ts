@@ -14,6 +14,7 @@ export const DEFAULT_TUNING_CONFIG: TuningConfig = {
   releaseGraceMs: 150,
   panDeadzonePx: 0,
   zoomDeadzoneRatio: 0.005,
+  rotateDeadzoneRad: 0.001,
   smoothingAlpha: 0.35,
   minDetectionConfidence: 0.65,
   minTrackingConfidence: 0.65,

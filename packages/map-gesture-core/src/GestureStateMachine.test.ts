@@ -10,6 +10,7 @@ const FAST_TUNING: TuningConfig = {
   releaseGraceMs: 0,      // grace=0: idle on the SECOND frame after release
   panDeadzonePx: 0,
   zoomDeadzoneRatio: 0,
+  rotateDeadzoneRad: 0,
   smoothingAlpha: 1,      // no smoothing, raw values pass through
   minDetectionConfidence: 0.65,
   minTrackingConfidence: 0.65,
