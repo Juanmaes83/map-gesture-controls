@@ -4,13 +4,15 @@ import type { StateMachineOutput } from '@map-gesture-controls/core';
 
 // --- Minimal google.maps.Map mock ---------------------------------------------------
 
-function makeMapMock(opts: {
-  center?: { lat: number; lng: number };
-  zoom?: number;
-  heading?: number;
-  width?: number;
-  height?: number;
-} = {}) {
+function makeMapMock(
+  opts: {
+    center?: { lat: number; lng: number };
+    zoom?: number;
+    heading?: number;
+    width?: number;
+    height?: number;
+  } = {},
+) {
   const lat = opts.center?.lat ?? 0;
   const lng = opts.center?.lng ?? 0;
   const zoom = opts.zoom ?? 10;
@@ -53,15 +55,30 @@ function idle(): StateMachineOutput {
 }
 
 function panning(dx: number, dy: number): StateMachineOutput {
-  return { mode: 'panning', panDelta: { x: dx, y: dy }, zoomDelta: null, rotateDelta: null };
+  return {
+    mode: 'panning',
+    panDelta: { x: dx, y: dy },
+    zoomDelta: null,
+    rotateDelta: null,
+  };
 }
 
 function zooming(delta: number): StateMachineOutput {
-  return { mode: 'zooming', panDelta: null, zoomDelta: delta, rotateDelta: null };
+  return {
+    mode: 'zooming',
+    panDelta: null,
+    zoomDelta: delta,
+    rotateDelta: null,
+  };
 }
 
 function rotating(delta: number): StateMachineOutput {
-  return { mode: 'rotating', panDelta: null, zoomDelta: null, rotateDelta: delta };
+  return {
+    mode: 'rotating',
+    panDelta: null,
+    zoomDelta: null,
+    rotateDelta: delta,
+  };
 }
 
 // --- Tests ---------------------------------------------------------------------------
@@ -71,7 +88,13 @@ describe('GoogleMapsGestureInteraction', () => {
   let mocks: ReturnType<typeof makeMapMock>;
 
   beforeEach(() => {
-    mocks = makeMapMock({ center: { lat: 0, lng: 0 }, zoom: 10, heading: 0, width: 800, height: 600 });
+    mocks = makeMapMock({
+      center: { lat: 0, lng: 0 },
+      zoom: 10,
+      heading: 0,
+      width: 800,
+      height: 600,
+    });
     // @ts-expect-error - we pass a minimal mock, not a full google.maps.Map
     interaction = new GoogleMapsGestureInteraction(mocks.map);
   });
@@ -98,7 +121,9 @@ describe('GoogleMapsGestureInteraction', () => {
   it('negates dx (webcam mirror)', () => {
     // Moving hand right (positive dx) should pan the map left (negative dLng at heading=0)
     interaction.apply(panning(0.1, 0.0));
-    const { center } = mocks.moveCamera.mock.calls[0][0] as { center: { lat: number; lng: number } };
+    const { center } = mocks.moveCamera.mock.calls[0][0] as {
+      center: { lat: number; lng: number };
+    };
     // dx is positive, negated to negative screen pixels, heading=0 means no rotation,
     // so dLng should be negative
     expect(center.lng).toBeLessThan(0);
@@ -106,12 +131,20 @@ describe('GoogleMapsGestureInteraction', () => {
 
   it('pans correctly when heading is non-zero', () => {
     // At 180-degree heading, a screen-right pan should become positive dLng (reversed)
-    const rotatedMocks = makeMapMock({ center: { lat: 0, lng: 0 }, zoom: 10, heading: 180 });
+    const rotatedMocks = makeMapMock({
+      center: { lat: 0, lng: 0 },
+      zoom: 10,
+      heading: 180,
+    });
     // @ts-expect-error
-    const rotatedInteraction = new GoogleMapsGestureInteraction(rotatedMocks.map);
+    const rotatedInteraction = new GoogleMapsGestureInteraction(
+      rotatedMocks.map,
+    );
 
     rotatedInteraction.apply(panning(0.1, 0.0));
-    const { center } = rotatedMocks.moveCamera.mock.calls[0][0] as { center: { lat: number; lng: number } };
+    const { center } = rotatedMocks.moveCamera.mock.calls[0][0] as {
+      center: { lat: number; lng: number };
+    };
     // With 180-degree heading, the sign of dLng flips relative to heading=0
     expect(center.lng).toBeGreaterThan(0);
     rotatedInteraction.dispose();
@@ -156,7 +189,9 @@ describe('GoogleMapsGestureInteraction', () => {
   it('clamps zoom to valid range (0-22)', () => {
     // Push zoom way beyond upper bound
     interaction.apply(zooming(100));
-    const { zoom: high } = mocks.moveCamera.mock.calls[0][0] as { zoom: number };
+    const { zoom: high } = mocks.moveCamera.mock.calls[0][0] as {
+      zoom: number;
+    };
     expect(high).toBeLessThanOrEqual(22);
 
     // Push zoom way below lower bound
@@ -181,7 +216,9 @@ describe('GoogleMapsGestureInteraction', () => {
   it('converts rotateDelta from radians to degrees', () => {
     const delta = Math.PI / 2; // 90 degrees
     interaction.apply(rotating(delta));
-    const { heading } = mocks.moveCamera.mock.calls[0][0] as { heading: number };
+    const { heading } = mocks.moveCamera.mock.calls[0][0] as {
+      heading: number;
+    };
     expect(heading).toBeCloseTo(90);
   });
 
@@ -192,7 +229,9 @@ describe('GoogleMapsGestureInteraction', () => {
 
     i.apply(rotating(Math.PI / 4)); // +45 degrees
 
-    const { heading } = rotatedMocks.moveCamera.mock.calls[0][0] as { heading: number };
+    const { heading } = rotatedMocks.moveCamera.mock.calls[0][0] as {
+      heading: number;
+    };
     expect(heading).toBeCloseTo(90);
     i.dispose();
   });
@@ -243,14 +282,17 @@ describe('GoogleMapsGestureInteraction', () => {
 
     // Next rotation should start from 180
     interaction.apply(rotating(Math.PI / 4)); // +45 degrees
-    const { heading } = mocks.moveCamera.mock.calls[0][0] as { heading: number };
+    const { heading } = mocks.moveCamera.mock.calls[0][0] as {
+      heading: number;
+    };
     expect(heading).toBeCloseTo(225);
   });
 
   // -- gracefully handles missing data ------------------------------------------------
 
   it('does not throw when getCenter returns null', () => {
-    mocks.map.getCenter = () => null as unknown as ReturnType<typeof mocks.map.getCenter>;
+    mocks.map.getCenter = () =>
+      null as unknown as ReturnType<typeof mocks.map.getCenter>;
     expect(() => interaction.apply(panning(0.1, 0.1))).not.toThrow();
   });
 
