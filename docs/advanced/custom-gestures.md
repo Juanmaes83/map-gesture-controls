@@ -1,5 +1,5 @@
 ---
-title: Custom Gestures - Map Gesture Controls
+title: Custom Gestures
 description: Extend Map Gesture Controls with custom hand gestures. Hook into the classification and application pipeline to add your own gesture behaviors.
 head:
   - - meta

@@ -1,5 +1,5 @@
 ---
-title: Google Maps Examples - Map Gesture Controls
+title: Google Maps Examples
 description: Live demos and code examples for hand gesture map controls with Google Maps. Basic setup, sensitivity tuning, custom overlays, and toggle controls.
 head:
   - - meta

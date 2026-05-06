@@ -1,5 +1,5 @@
 ---
-title: Getting Started - Map Gesture Controls
+title: Getting Started with Map Gesture Controls
 description: Choose your mapping library and set up hand gesture controls in minutes. Supports OpenLayers, Google Maps, and Leaflet.
 head:
   - - meta

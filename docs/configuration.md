@@ -1,5 +1,5 @@
 ---
-title: Configuration - Map Gesture Controls
+title: Configuration
 description: Configure webcam overlay, gesture sensitivity, smoothing, dead zones, and debug mode for Map Gesture Controls. Full reference of all available options.
 head:
   - - meta

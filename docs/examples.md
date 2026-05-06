@@ -1,5 +1,5 @@
 ---
-title: Examples - Map Gesture Controls
+title: Examples
 description: Live demos and code examples for hand gesture map controls.
 head:
   - - meta

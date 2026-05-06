@@ -1,5 +1,5 @@
 ---
-title: Gestures - Map Gesture Controls
+title: Gestures
 description: Learn the hand gestures for controlling maps. Right fist or pinch to zoom, left fist or pinch to pan, both hands to rotate, pray to reset. Understand gesture modes, recognition pipeline, and smoothing.
 head:
   - - meta

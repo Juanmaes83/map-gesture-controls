@@ -1,5 +1,5 @@
 ---
-title: Getting Started with Leaflet - Map Gesture Controls
+title: Getting Started with Leaflet
 description: Install and set up hand gesture controls for Leaflet maps in minutes. Step-by-step guide for integrating webcam-based gesture navigation.
 head:
   - - meta

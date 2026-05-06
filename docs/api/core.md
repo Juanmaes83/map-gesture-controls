@@ -1,5 +1,5 @@
 ---
-title: Core API Reference - Map Gesture Controls
+title: Core API Reference
 description: API documentation for @map-gesture-controls/core. GestureController, GestureStateMachine, gesture classifier, and all core types.
 head:
   - - meta

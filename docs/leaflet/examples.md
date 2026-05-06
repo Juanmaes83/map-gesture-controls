@@ -1,5 +1,5 @@
 ---
-title: Leaflet Examples - Map Gesture Controls
+title: Leaflet Examples
 description: Live demos and code examples for hand gesture map controls with Leaflet. Basic setup, sensitivity tuning, custom overlays, and toggle controls.
 head:
   - - meta

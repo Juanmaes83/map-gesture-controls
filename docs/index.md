@@ -1,6 +1,6 @@
 ---
 layout: home
-title: Map Gesture Controls - Hand Gesture Navigation for OpenLayers, Google Maps, and Leaflet
+title: Hand Gesture Controls for Maps
 description: Control OpenLayers, Google Maps, and Leaflet with hand gestures using your webcam. Browser-native, privacy-first, powered by MediaPipe. No backend required.
 head:
   - - meta

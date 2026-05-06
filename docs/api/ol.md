@@ -1,5 +1,5 @@
 ---
-title: OpenLayers API Reference - Map Gesture Controls
+title: OpenLayers API Reference
 description: API documentation for @map-gesture-controls/ol. GestureMapController, configuration types, events, and full TypeScript reference.
 head:
   - - meta

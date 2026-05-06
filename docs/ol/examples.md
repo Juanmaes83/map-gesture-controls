@@ -1,5 +1,5 @@
 ---
-title: OpenLayers Examples - Map Gesture Controls
+title: OpenLayers Examples
 description: Live demos and code examples for hand gesture map controls with OpenLayers. Basic setup, sensitivity tuning, custom overlays, and toggle controls.
 head:
   - - meta

@@ -1,5 +1,5 @@
 ---
-title: Getting Started with OpenLayers - Map Gesture Controls
+title: Getting Started with OpenLayers
 description: Install and set up hand gesture controls for OpenLayers maps in minutes. Step-by-step guide for integrating webcam-based gesture navigation.
 head:
   - - meta

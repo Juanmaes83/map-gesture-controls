@@ -1,5 +1,5 @@
 ---
-title: Google Maps API Reference - Map Gesture Controls
+title: Google Maps API Reference
 description: API documentation for @map-gesture-controls/google-maps. GestureMapController, configuration types, and full TypeScript reference.
 head:
   - - meta

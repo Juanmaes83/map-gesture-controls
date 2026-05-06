@@ -1,5 +1,5 @@
 ---
-title: Getting Started with Google Maps - Map Gesture Controls
+title: Getting Started with Google Maps
 description: Install and set up hand gesture controls for Google Maps in minutes. Step-by-step guide for integrating webcam-based gesture navigation.
 head:
   - - meta

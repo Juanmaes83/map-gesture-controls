@@ -1,5 +1,5 @@
 ---
-title: Leaflet API Reference - Map Gesture Controls
+title: Leaflet API Reference
 description: API documentation for @map-gesture-controls/leaflet. GestureMapController, configuration types, and full TypeScript reference.
 head:
   - - meta
