@@ -1,0 +1,404 @@
+/* Living Map Experience — premium branded shell.
+   All colors come from CSS variables set at runtime from the brand config. */
+
+:root {
+  --lm-primary: #0e7c8c;
+  --lm-accent: #f4b942;
+  --lm-bg: #0b1220;
+  --lm-surface: #111c30;
+  --lm-text: #f4f7fb;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family:
+    'Segoe UI',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background: var(--lm-bg);
+  color: var(--lm-text);
+  overflow: hidden;
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------- Full-screen overlay screens ---------- */
+
+.lm-screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  background:
+    radial-gradient(
+      ellipse at 30% 20%,
+      color-mix(in srgb, var(--lm-primary) 45%, transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, var(--lm-bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  padding: 32px;
+}
+
+.lm-screen.visible {
+  display: flex;
+}
+
+.lm-screen-inner {
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.lm-logo {
+  width: 84px;
+  height: 84px;
+  border-radius: 24px;
+  background: var(--lm-accent);
+  color: #1a1a1a;
+  font-size: 34px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -1px;
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--lm-accent) 40%, transparent);
+}
+
+.lm-brand-name {
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  opacity: 0.85;
+}
+
+.lm-title {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -1px;
+}
+
+.lm-subtitle {
+  font-size: clamp(16px, 2vw, 21px);
+  line-height: 1.5;
+  opacity: 0.85;
+  max-width: 520px;
+}
+
+.lm-claim {
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lm-accent);
+  font-weight: 700;
+}
+
+.lm-btn {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 16px 36px;
+  border-radius: 999px;
+  background: var(--lm-accent);
+  color: #1a1a1a;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--lm-accent) 35%, transparent);
+}
+
+.lm-btn:hover {
+  transform: translateY(-2px);
+}
+
+.lm-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.lm-btn.ghost {
+  background: transparent;
+  color: var(--lm-text);
+  border: 1.5px solid color-mix(in srgb, var(--lm-text) 40%, transparent);
+  box-shadow: none;
+  font-size: 15px;
+  padding: 12px 28px;
+}
+
+.lm-privacy-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: color-mix(in srgb, var(--lm-surface) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lm-text) 12%, transparent);
+  border-radius: 16px;
+  padding: 18px 20px;
+  font-size: 15px;
+  line-height: 1.55;
+  text-align: left;
+  max-width: 560px;
+  opacity: 0.95;
+}
+
+/* ---------- HUD ---------- */
+
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  z-index: 20;
+}
+
+#hud.visible {
+  display: block;
+}
+
+.lm-hud-top {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lm-chip {
+  pointer-events: auto;
+  background: color-mix(in srgb, var(--lm-surface) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lm-text) 14%, transparent);
+  color: var(--lm-text);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lm-chip.brand {
+  background: var(--lm-primary);
+  border-color: transparent;
+}
+
+#hud-progress-bar {
+  width: 110px;
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lm-text) 18%, transparent);
+  overflow: hidden;
+}
+
+#hud-progress-bar > span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: var(--lm-accent);
+  transition: width 0.5s ease;
+}
+
+#hud-categories {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lm-cat-chip {
+  background: color-mix(in srgb, var(--lm-surface) 80%, transparent);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  border: 1px solid color-mix(in srgb, var(--lm-text) 10%, transparent);
+}
+
+#hud-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(640px, 90vw);
+  background: color-mix(in srgb, var(--lm-surface) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lm-text) 14%, transparent);
+  border-radius: 16px;
+  padding: 14px 22px;
+  font-size: 15px;
+  text-align: center;
+  line-height: 1.5;
+  backdrop-filter: blur(8px);
+  transition: opacity 0.8s ease;
+}
+
+#hud-hint.faded {
+  opacity: 0;
+}
+
+#hud-reset {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: none;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+#hud-reset.visible {
+  display: flex;
+}
+
+/* ---------- POI card ---------- */
+
+#poi-card {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: min(380px, calc(100vw - 40px));
+  background: color-mix(in srgb, var(--lm-surface) 97%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lm-text) 14%, transparent);
+  border-radius: 20px;
+  padding: 22px;
+  z-index: 30;
+  transform: translateY(24px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+  backdrop-filter: blur(12px);
+}
+
+#poi-card.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#card-emoji {
+  font-size: 34px;
+}
+
+#card-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: 6px;
+}
+
+#card-category {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--lm-accent);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+#card-description {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.55;
+  opacity: 0.9;
+}
+
+#card-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: 0;
+  color: var(--lm-text);
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+/* ---------- Reward ---------- */
+
+#reward-code-box {
+  background: var(--lm-accent);
+  color: #1a1a1a;
+  font-weight: 800;
+  font-size: clamp(22px, 4vw, 34px);
+  letter-spacing: 2px;
+  border-radius: 16px;
+  padding: 18px 34px;
+}
+
+.lm-reward-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.lm-reward-actions .lm-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ---------- Toast ---------- */
+
+#toast {
+  position: absolute;
+  top: 76px;
+  left: 50%;
+  transform: translate(-50%, -12px);
+  background: var(--lm-primary);
+  color: var(--lm-text);
+  border-radius: 999px;
+  padding: 12px 26px;
+  font-weight: 700;
+  font-size: 15px;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  box-shadow: 0 12px 36px rgb(0 0 0 / 35%);
+}
+
+#toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------- Kiosk mode ---------- */
+
+body.kiosk .lm-title {
+  font-size: clamp(44px, 6vw, 72px);
+}
+
+body.kiosk .lm-btn {
+  font-size: 22px;
+  padding: 20px 44px;
+}
+
+body.kiosk #hud-hint {
+  font-size: 18px;
+}
