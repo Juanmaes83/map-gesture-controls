@@ -1,5 +1,7 @@
 # Map Gesture Controls: Hand Tracking for OpenLayers, Google Maps & Leaflet
 
+> **Fork note — Living Map Experience:** this fork adds a brand-configurable discovery experience built on top of the library (welcome → privacy → gesture exploration → POI unlocks → reward/CTA), part of the [Rubik Sota Director de Orquesta](https://github.com/Juanmaes83/Rubik-Sota-Director-de-Orquesta) platform. See [`examples/living-map/README.md`](examples/living-map/README.md). Run `npm run dev` and open `/map-gesture-controls/living-map.html`.
+
 [![npm version](https://img.shields.io/npm/v/@map-gesture-controls/ol?style=flat-square)](https://www.npmjs.com/package/@map-gesture-controls/ol)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Bundle size](https://img.shields.io/bundlephobia/minzip/@map-gesture-controls/ol?style=flat-square&label=minzipped)](https://bundlephobia.com/package/@map-gesture-controls/ol)

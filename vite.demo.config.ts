@@ -58,6 +58,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
+        'living-map': resolve(root, 'examples/living-map.html'),
         'demo-basic': resolve(root, 'examples/demo-basic.html'),
         'demo-controls-overview': resolve(
           root,

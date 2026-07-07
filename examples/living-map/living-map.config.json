@@ -1,0 +1,126 @@
+{
+  "schema": "rubik-experience-config/v0.1",
+  "id": "living-map-demo-torrevieja",
+  "module": "living-map-experience",
+  "engine": "map-gesture-controls",
+  "vertical": "tourism",
+  "brand": {
+    "name": "Vive Torrevieja",
+    "slug": "vive-torrevieja",
+    "claim": "El destino que responde a tus manos",
+    "logoText": "VT",
+    "palette": {
+      "primary": "#0e7c8c",
+      "accent": "#f4b942",
+      "background": "#0b1220",
+      "surface": "#111c30",
+      "text": "#f4f7fb"
+    }
+  },
+  "map": {
+    "center": [-0.6819, 37.9787],
+    "zoom": 13.2,
+    "minZoom": 11,
+    "maxZoom": 18,
+    "unlockZoom": 14.6
+  },
+  "narrative": {
+    "welcomeTitle": "Descubre Torrevieja sin tocar nada",
+    "welcomeSubtitle": "Explora el mapa con tus manos, encuentra los lugares imprescindibles y desbloquea tu recompensa.",
+    "welcomeCta": "Empezar la experiencia",
+    "privacyTitle": "Tu camara, solo para tus gestos",
+    "privacyBody": "Usamos la camara unicamente para detectar tus manos y mover el mapa. Todo se procesa en este dispositivo: ninguna imagen se envia ni se guarda. Puedes explorar tambien sin camara.",
+    "privacyAccept": "Activar gestos con camara",
+    "privacyFallback": "Continuar sin camara",
+    "exploreHint": "Puno o pinza con la mano izquierda para moverte. Mano derecha arriba/abajo para acercarte. Acercate a un punto para desbloquearlo.",
+    "fallbackHint": "Arrastra el mapa y haz zoom para acercarte a cada punto y desbloquearlo.",
+    "unlockToast": "Has descubierto {name}",
+    "rewardTitle": "Has completado tu ruta",
+    "rewardBody": "Torrevieja ya es un poco tuya. Canjea tu recompensa y llevate tu tarjeta de ruta."
+  },
+  "categories": [
+    { "id": "playa", "label": "Playas", "emoji": "🏖️" },
+    { "id": "natural", "label": "Naturaleza", "emoji": "🦩" },
+    { "id": "cultura", "label": "Cultura", "emoji": "🏛️" },
+    { "id": "gastro", "label": "Gastronomia", "emoji": "🍤" }
+  ],
+  "pois": [
+    {
+      "id": "laguna-rosa",
+      "name": "Laguna Rosa",
+      "category": "natural",
+      "emoji": "🦩",
+      "lonLat": [-0.715, 38.005],
+      "radiusM": 900,
+      "description": "La laguna de agua rosa mas famosa del Mediterraneo. Atardeceres irrepetibles y flamencos en libertad."
+    },
+    {
+      "id": "playa-del-cura",
+      "name": "Playa del Cura",
+      "category": "playa",
+      "emoji": "🏖️",
+      "lonLat": [-0.6797, 37.9748],
+      "radiusM": 500,
+      "description": "La playa urbana con mas ambiente: paseo, terrazas y bandera azul en pleno centro."
+    },
+    {
+      "id": "puerto-marina",
+      "name": "Puerto y Paseo Maritimo",
+      "category": "gastro",
+      "emoji": "⛵",
+      "lonLat": [-0.6835, 37.9695],
+      "radiusM": 550,
+      "description": "El corazon marinero: llegada de barcas, mercadillo del puerto y la mejor cocina del mar."
+    },
+    {
+      "id": "museo-mar-sal",
+      "name": "Museo del Mar y de la Sal",
+      "category": "cultura",
+      "emoji": "🏛️",
+      "lonLat": [-0.6822, 37.9762],
+      "radiusM": 450,
+      "description": "La historia salinera de la ciudad contada en primera persona. Entrada libre."
+    },
+    {
+      "id": "parque-molino-agua",
+      "name": "Parque del Molino del Agua",
+      "category": "natural",
+      "emoji": "🌲",
+      "lonLat": [-0.662, 38.008],
+      "radiusM": 700,
+      "description": "Dunas y pinada junto al mar: el pulmon verde entre Torrevieja y La Mata."
+    },
+    {
+      "id": "playa-la-mata",
+      "name": "Playa de La Mata",
+      "category": "playa",
+      "emoji": "🌊",
+      "lonLat": [-0.654, 38.029],
+      "radiusM": 800,
+      "description": "Dos kilometros de arena dorada con espiritu local y chiringuitos legendarios."
+    }
+  ],
+  "reward": {
+    "threshold": 4,
+    "type": "code",
+    "code": "VIVE-TORREVIEJA-26",
+    "message": "Canjea este codigo en la Oficina de Turismo y llevate el pack de bienvenida del destino.",
+    "ctaPrimary": {
+      "label": "Reservar mi experiencia",
+      "href": "https://turismodetorrevieja.com"
+    },
+    "ctaSecondary": {
+      "label": "Enviar por WhatsApp",
+      "href": "https://wa.me/?text=He%20completado%20la%20ruta%20Vive%20Torrevieja%20%F0%9F%A6%A9%20Mi%20codigo%3A%20VIVE-TORREVIEJA-26"
+    },
+    "shareText": "He descubierto Torrevieja con las manos 🦩 Ruta completada en la Living Map Experience."
+  },
+  "display": {
+    "kiosk": false,
+    "attractIdleMs": 45000
+  },
+  "meta": {
+    "status": "demo",
+    "notes": "Configuracion de demostracion con datos ficticios de campana. Coordenadas aproximadas reales de Torrevieja (Alicante)."
+  }
+}

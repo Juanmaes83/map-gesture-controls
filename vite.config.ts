@@ -60,6 +60,7 @@ export default defineConfig({
       input: {
         index: resolve(root, 'examples/index.html'),
         examples: resolve(root, 'examples/examples.html'),
+        'living-map': resolve(root, 'examples/living-map.html'),
       },
     },
   },
