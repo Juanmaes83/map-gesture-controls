@@ -1,5 +1,41 @@
 # Changelog
 
+## [1.0.0](https://github.com/Juanmaes83/map-gesture-controls/compare/ol-v1.0.0...ol-v1.0.0) (2026-07-08)
+
+
+### Features
+
+* added google maps support ([cca8b56](https://github.com/Juanmaes83/map-gesture-controls/commit/cca8b56539ccbd3597d18f1296a9474a5b57ed87))
+* added pray controls to reset ([8ddfb7b](https://github.com/Juanmaes83/map-gesture-controls/commit/8ddfb7b1a9a873062a03aeb5dc6253dac696d6b3))
+* added pray controls to reset ([fe24c9c](https://github.com/Juanmaes83/map-gesture-controls/commit/fe24c9c750e4e60e17426c0c66658eb046e609ac))
+* **leaflet:** add Leaflet gesture controls ([3613cc0](https://github.com/Juanmaes83/map-gesture-controls/commit/3613cc0d01830b98e95594121715592cadf9bd1d))
+* **living-map:** add Living Map Experience brand-configurable discovery module ([cd36416](https://github.com/Juanmaes83/map-gesture-controls/commit/cd3641600c0014f3ff1882e6f2baa507ebe7cfcf))
+* stable API release ([bfa0872](https://github.com/Juanmaes83/map-gesture-controls/commit/bfa08723a8fad4d14a837acf5de4c1a6c709841e))
+
+
+### Bug Fixes
+
+* (leaflet) continuous zoom settle lifecycle and default pan scale; sync docs ([7625f8a](https://github.com/Juanmaes83/map-gesture-controls/commit/7625f8a01233913a8b9bbe8ab7fff06228c1d066))
+* added fallbacks ([9e91a9d](https://github.com/Juanmaes83/map-gesture-controls/commit/9e91a9d8cfda97beec5d8e9e1ed02c7d46e147fe))
+* added gif ([4175302](https://github.com/Juanmaes83/map-gesture-controls/commit/4175302a2c3fcf29e103b06250f951edba2321c2))
+* build ([d744158](https://github.com/Juanmaes83/map-gesture-controls/commit/d7441584d7a66dfee6b5a1b93ade093258aad09e))
+* changed controls ([f56efbc](https://github.com/Juanmaes83/map-gesture-controls/commit/f56efbc17a7ab9c56530518675129b22054c62d0))
+* changed controls ([cedf8cc](https://github.com/Juanmaes83/map-gesture-controls/commit/cedf8cc98d38147a6627cebdb5061a4daf12ae17))
+* comments ([385b9f6](https://github.com/Juanmaes83/map-gesture-controls/commit/385b9f61c2e7c7b095c5aee9fc022a972d7081ee))
+* comments of projection ([fffa0c5](https://github.com/Juanmaes83/map-gesture-controls/commit/fffa0c50ab1dc1448be0a4b7ddc0869b8b31a29e))
+* copy ([20a24a2](https://github.com/Juanmaes83/map-gesture-controls/commit/20a24a206403a9796b261255a0848b633eb0586d))
+* copy and documentation for npm packages ([5b12dba](https://github.com/Juanmaes83/map-gesture-controls/commit/5b12dba4036f05dc913cc23cd914bb3d0fa754a6))
+* gif image v2 ([e44cad4](https://github.com/Juanmaes83/map-gesture-controls/commit/e44cad469e0b81fe45ba0e8f4830416feb6486da))
+* **openlayers:** snappy rotation ([ff14040](https://github.com/Juanmaes83/map-gesture-controls/commit/ff14040d1d09937a660faeb34c67e2694cfa9ff3))
+* **openlayers:** snappy rotation ([c6bc9c2](https://github.com/Juanmaes83/map-gesture-controls/commit/c6bc9c20127781886236e60cf0c8bd34d432060f))
+* performance improve ([be44739](https://github.com/Juanmaes83/map-gesture-controls/commit/be4473937182842670df0805f56cd28a5bfa7b84))
+* performance improve ([af07990](https://github.com/Juanmaes83/map-gesture-controls/commit/af079906e3d84990201d0d88a6905c6665d87abb))
+* pray reset tuning ([0a59b65](https://github.com/Juanmaes83/map-gesture-controls/commit/0a59b65d75c336dd500511bcefaf3245db26e872))
+* rotate pan issue ([e835a85](https://github.com/Juanmaes83/map-gesture-controls/commit/e835a85b367f6bd30a33e266c813b857ea3c4f86))
+* test ([3c1fd26](https://github.com/Juanmaes83/map-gesture-controls/commit/3c1fd26ae4e9cf28d41957c44fad4eb7099b73ef))
+* ts in build ([41e056a](https://github.com/Juanmaes83/map-gesture-controls/commit/41e056aa545c84badc5c93439bc4f348f5d5c882))
+* updated readmes with author ([9ffff92](https://github.com/Juanmaes83/map-gesture-controls/commit/9ffff9240c99a3aa71da7e098b62a4d93ce8aad9))
+
 ## [1.0.0](https://github.com/sanderdesnaijer/map-gesture-controls/compare/ol-v0.4.1...ol-v1.0.0) (2026-04-28)
 
 ### Features
