@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="La Batuta de Torrevieja: una Living Map Experience premium para despertar lugares, componer una ruta viva y recibir una tarjeta compartible."
+    />
+    <title>La Batuta de Torrevieja</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ol@10.2.1/ol.css"
+    />
+    <link rel="stylesheet" href="./batuta-torrevieja/style.css" />
+  </head>
+  <body>
+    <div id="map" aria-label="Mapa interactivo de Torrevieja"></div>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div class="lm-hud-top">
+        <span class="lm-chip brand" id="hud-brand">Torrevieja</span>
+        <span class="lm-chip status" id="hud-camera">Camara inactiva</span>
+        <span class="lm-chip status" id="hud-hand">Modo tactil listo</span>
+        <span class="lm-chip status" id="hud-gesture">Gesto: espera</span>
+        <span class="lm-chip progress-chip">
+          <span id="hud-progress">0/0 notas despiertas</span>
+          <span id="hud-progress-bar"><span></span></span>
+        </span>
+        <span id="hud-categories"></span>
+        <button class="lm-chip hud-action" id="hud-help" type="button">
+          Como se usa
+        </button>
+        <button class="lm-chip hud-action" id="hud-fallback" type="button">
+          Modo sin camara
+        </button>
+      </div>
+      <div id="hud-hint"></div>
+      <button
+        class="lm-chip"
+        id="hud-reset"
+        title="Reiniciar experiencia"
+        type="button"
+      >
+        Reiniciar
+      </button>
+    </div>
+
+    <!-- POI card -->
+    <aside id="poi-card" aria-live="polite">
+      <button id="card-close" aria-label="Cerrar ficha" type="button">x</button>
+      <span class="lm-note-label">Nota despierta</span>
+      <div id="card-emoji"></div>
+      <h2 id="card-title"></h2>
+      <span id="card-category"></span>
+      <p id="card-description"></p>
+      <div id="card-progress"></div>
+    </aside>
+
+    <!-- Toast -->
+    <div id="toast" role="status"></div>
+
+    <!-- Welcome screen -->
+    <section class="lm-screen visible" id="screen-welcome">
+      <div class="lm-screen-inner hero-panel">
+        <div class="lm-logo" id="brand-logo">BT</div>
+        <div class="lm-brand-name" id="brand-name">La Batuta de Torrevieja</div>
+        <p class="lm-eyebrow">La ciudad que responde a tus manos</p>
+        <h1 class="lm-title" id="welcome-title">La Batuta de Torrevieja</h1>
+        <p class="lm-subtitle" id="welcome-subtitle">
+          Levanta la mano, despierta lugares y compón tu ruta viva por
+          Torrevieja.
+        </p>
+        <p class="lm-claim" id="brand-claim"></p>
+        <div class="lm-quick-grammar" aria-label="Resumen de gestos">
+          <div><strong>Despertar</strong><span>Levanta la mano</span></div>
+          <div><strong>Dirigir</strong><span>Mueve suave</span></div>
+          <div><strong>Acercar</strong><span>Dos manos abiertas</span></div>
+          <div><strong>Desbloquear</strong><span>Entra en un punto</span></div>
+        </div>
+        <div class="lm-actions">
+          <button class="lm-btn" id="btn-start-camera" type="button">
+            Empezar con camara
+          </button>
+          <button class="lm-btn ghost" id="btn-start-fallback" type="button">
+            Explorar sin camara
+          </button>
+          <button class="lm-btn text" id="btn-open-tutorial" type="button">
+            Ver como funciona
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy screen -->
+    <section class="lm-screen" id="screen-privacy">
+      <div class="lm-screen-inner trust-panel">
+        <p class="lm-eyebrow">Camara con confianza</p>
+        <h1 class="lm-title" id="privacy-title">Tu imagen no se guarda</h1>
+        <div class="lm-privacy-note">
+          <span aria-hidden="true">Privacidad</span>
+          <span id="privacy-body"></span>
+        </div>
+        <div class="lm-actions">
+          <button class="lm-btn" id="btn-camera" type="button">
+            Activar gestos con camara
+          </button>
+          <button class="lm-btn ghost" id="btn-fallback" type="button">
+            Vivirla sin camara
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tutorial screen -->
+    <section class="lm-screen" id="screen-tutorial">
+      <div class="lm-screen-inner tutorial-panel">
+        <p class="lm-eyebrow">Aprende los gestos</p>
+        <h1 class="lm-title">No mueves un mapa. Diriges una ciudad.</h1>
+        <div class="lm-gesture-grid">
+          <article>
+            <span class="gesture-icon">1</span>
+            <h2>Despertar</h2>
+            <p>Levanta la mano. La ciudad te ve y el mapa despierta.</p>
+            <small>Feedback: camara activa y pulso de luz.</small>
+          </article>
+          <article>
+            <span class="gesture-icon">2</span>
+            <h2>Dirigir</h2>
+            <p>Cierra una mano en puno o pinza y muevela suave.</p>
+            <small>Consecuencia real: pan del mapa.</small>
+          </article>
+          <article>
+            <span class="gesture-icon">3</span>
+            <h2>Acercar</h2>
+            <p>Usa dos manos abiertas y separa o acerca la distancia.</p>
+            <small>Consecuencia real: zoom del mapa.</small>
+          </article>
+          <article>
+            <span class="gesture-icon">4</span>
+            <h2>Desbloquear</h2>
+            <p>Acercate a una nota de la ciudad hasta entrar en su radio.</p>
+            <small>Feedback: microhistoria, contador y recompensa.</small>
+          </article>
+        </div>
+        <p class="lm-tutorial-note">
+          Sin camara puedes vivir el mismo ritual con raton o tactil: arrastra,
+          acerca y despierta lugares.
+        </p>
+        <div class="lm-actions">
+          <button class="lm-btn" id="btn-tutorial-camera" type="button">
+            Empezar con camara
+          </button>
+          <button class="lm-btn ghost" id="btn-tutorial-fallback" type="button">
+            Explorar sin camara
+          </button>
+          <button class="lm-btn text" id="btn-tutorial-close" type="button">
+            Volver
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reward screen -->
+    <section class="lm-screen" id="screen-reward">
+      <div class="lm-screen-inner reward-panel">
+        <p class="lm-eyebrow">La ciudad que despertaste</p>
+        <h1 class="lm-title" id="reward-title"></h1>
+        <p class="lm-subtitle" id="reward-body"></p>
+        <div id="reward-unlocked"></div>
+        <div id="reward-code-box"><span id="reward-code"></span></div>
+        <p class="lm-subtitle" id="reward-message"></p>
+        <div class="lm-reward-actions">
+          <a
+            class="lm-btn"
+            id="reward-cta-primary"
+            target="_blank"
+            rel="noopener"
+          ></a>
+          <a
+            class="lm-btn ghost"
+            id="reward-cta-secondary"
+            target="_blank"
+            rel="noopener"
+          ></a>
+        </div>
+        <div class="lm-reward-actions">
+          <button class="lm-btn ghost" id="reward-copy" type="button">
+            Copiar codigo
+          </button>
+          <button class="lm-btn ghost" id="reward-share" type="button">
+            Compartir ruta
+          </button>
+          <button class="lm-btn ghost" id="reward-download" type="button">
+            Descargar tarjeta
+          </button>
+          <button class="lm-btn ghost" id="reward-continue" type="button">
+            Seguir dirigiendo
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <script type="module" src="./batuta-torrevieja/main.ts"></script>
+  </body>
+</html>
