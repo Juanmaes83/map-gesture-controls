@@ -1,140 +1,74 @@
-# Living Map Experience v0.2
+# Living Map Experience
 
-Living Map Experience v0.2 convierte `map-gesture-controls` en una experiencia premium de destino: **La Batuta de Torrevieja**.
+Experiencia de descubrimiento territorial controlada por gestos, construida sobre `map-gesture-controls` para el ecosistema [Rubik Sota Director de Orquesta](https://github.com/Juanmaes83/Rubik-Sota-Director-de-Orquesta) (módulo 12 del WOW Premium Modules Backlog).
 
-Concepto: **no estás moviendo un mapa; estás dirigiendo una ciudad viva.** El usuario levanta la mano, despierta lugares, compone una ruta y recibe una tarjeta/recompensa compartible.
+**No es una demo técnica: es una experiencia de marca configurable por JSON.**
 
-## Qué problema resuelve v0.2
-
-La v0.1 funcionaba, pero se leía demasiado como demo técnica. El usuario podía navegar, aunque no siempre entendía rápido:
-
-- qué gesto hacer;
-- qué detectaba la cámara;
-- qué acción producía cada gesto;
-- cómo desbloquear lugares;
-- qué recompensa obtenía al final.
-
-La v0.2 introduce una capa clara de ritual, tutorial, HUD permanente, privacidad humana, microhistorias y salida final de marca.
+---
 
 ## Qué vive el usuario
 
-1. **Pantalla inicial inmediata:** La Batuta de Torrevieja, promesa corta y tres CTAs: cámara, sin cámara y tutorial.
-2. **Tutorial de gestos:** despertar, dirigir, acercar y desbloquear. Los gestos se explican como metáfora, pero se conectan con el control real existente.
-3. **Confianza de cámara:** la cámara solo lee gestos; no se graba ni guarda imagen. El modo sin cámara tiene la misma ruta y recompensa.
-4. **Exploración:** con cámara, el usuario usa puño/pinza para dirigir y dos manos abiertas para acercar. Sin cámara, usa ratón/táctil.
-5. **Desbloqueo:** al entrar en el radio de un POI con zoom suficiente, aparece una microhistoria como “nota” de ciudad.
-6. **Recompensa:** al despertar suficientes notas, se genera **Mi Ruta Viva de Torrevieja**, con POIs, CTA, share y tarjeta PNG.
+1. **Bienvenida** con marca, claim y una promesa clara ("descubre X sin tocar nada").
+2. **Pantalla de privacidad** antes de pedir cámara: qué se usa, qué no se guarda, y botón "Continuar sin cámara" siempre visible.
+3. **Exploración**: mueve el mapa con la mano izquierda (puño/pinza), zoom con la derecha, rotación con ambas. Sin cámara, el mapa funciona con arrastre y zoom táctil/ratón.
+4. **Descubrimiento**: al "llegar" a un punto de interés (centro del mapa dentro del radio del POI con zoom suficiente), el punto se desbloquea: toast + ficha con narrativa del lugar.
+5. **Recompensa**: al alcanzar el umbral configurado, pantalla final con código canjeable, CTA principal (reserva/landing), CTA secundario (WhatsApp), compartir y **tarjeta de ruta descargable** (PNG 1080×1350 generado en canvas con los colores de la marca).
 
-## Personalización por JSON
+## Qué obtiene la empresa
 
-Todo se configura en [`living-map.config.json`](living-map.config.json):
+- **Atención y permanencia**: una pantalla o web que la gente quiere tocar… sin tocar.
+- **Narrativa territorial**: sus lugares, tiendas, stands o inmuebles como puntos desbloqueables.
+- **Conversión**: código de recompensa + CTA a reserva/WhatsApp/landing = lead o visita física.
+- **Contenido compartible**: la tarjeta de ruta es un souvenir social con la marca dentro.
+- **Medición futura**: la experiencia emite eventos `livingmap:*` (`ready`, `welcome`, `start`, `unlock`, `reward`, `share`, `download`) listos para conectar analytics.
 
-| Bloque       | Qué controla                                                          |
-| ------------ | --------------------------------------------------------------------- |
-| `brand`      | nombre, slug, claim, logo textual y paleta premium                    |
-| `map`        | centro, zoom inicial, límites y zoom mínimo de desbloqueo             |
-| `narrative`  | textos de bienvenida, privacidad, hints, unlock y recompensa          |
-| `categories` | familias visuales de lugares                                          |
-| `pois`       | lugares, coordenadas, radio, emoji y microhistoria                    |
-| `reward`     | umbral, código, mensaje, CTA principal, WhatsApp/share y texto social |
-| `display`    | modo kiosk y auto-reset                                               |
+## Personalización (1 JSON = 1 marca)
 
-Cargar otra marca sin rebuild:
+Todo se configura en [`living-map.config.json`](living-map.config.json), alineado con el schema `rubik-experience-config/v0.1` de Rubik:
 
-```bash
-living-map.html?config=<url-del-json>
-```
+| Bloque       | Qué controla                                                                                              |
+| ------------ | --------------------------------------------------------------------------------------------------------- |
+| `brand`      | nombre, slug, claim, logo (texto), paleta completa (CSS variables)                                        |
+| `map`        | centro, zoom inicial/mín/máx y `unlockZoom` (zoom mínimo para desbloquear)                                |
+| `narrative`  | todos los textos: bienvenida, privacidad, hints, toast de desbloqueo, recompensa                          |
+| `categories` | leyenda de categorías con emoji                                                                           |
+| `pois`       | puntos de interés: id, nombre, categoría, emoji, `[lon, lat]`, radio de desbloqueo en metros, descripción |
+| `reward`     | umbral de desbloqueos, código, mensaje, CTA primario/secundario (href), texto de share                    |
+| `display`    | modo kiosk/escaparate y tiempo de attract-reset                                                           |
 
-Forzar modo escaparate:
+Cargar otra marca sin rebuild: `living-map.html?config=<url-del-json>`. Forzar modo escaparate: `?kiosk=1` (tipografía grande, botón reiniciar, auto-reset por inactividad).
 
-```bash
-living-map.html?kiosk=1
-```
+## Sectores preparados
 
-## Mejoras concretas en navegación gestual
+| Sector             | Los POIs se convierten en…                  | Reward típico                        |
+| ------------------ | ------------------------------------------- | ------------------------------------ |
+| Turismo / destinos | playas, monumentos, gastronomía             | pack bienvenida, descuento actividad |
+| Inmobiliaria       | promociones, servicios del barrio, colegios | dossier + visita                     |
+| Retail / CC        | tiendas, promociones, recorrido             | cupón canjeable                      |
+| Eventos / ferias   | stands, agenda, retos                       | premio de patrocinador               |
+| Automoción         | concesionarios, rutas de prueba             | cita test drive                      |
+| Museos / cultura   | salas, obras                                | contenido desbloqueado               |
+| Educación          | geografía, historia, rutas didácticas       | insignia/diploma                     |
 
-- Tutorial visible con máximo cuatro gestos.
-- HUD permanente con estado de cámara, modo, gesto sugerido/procedente del overlay y progreso.
-- Botón “Cómo se usa?” siempre disponible.
-- Botón “Modo sin cámara” siempre disponible.
-- Microcopy honesto: si la librería no expone señal fina de mano detectada en el módulo, el HUD remite al recuadro de cámara/overlay real.
-- Fallback táctil con la misma recompensa y sin tono de castigo.
+La demo incluida es **turismo (Torrevieja, Alicante)** con datos ficticios de campaña.
 
-## Eventos frontend preparados
+## Privacidad
 
-La experiencia emite eventos `CustomEvent` sin backend:
-
-- `livingmap:tutorial_open`
-- `livingmap:camera_start`
-- `livingmap:fallback_used`
-- `livingmap:gesture_hint`
-- `livingmap:poi_unlock`
-- `livingmap:reward_unlock`
-- `livingmap:share`
-- `livingmap:download`
-- `livingmap:cta_click`
-
-## Sectores aplicables
-
-- Turismo y destinos.
-- Inmobiliaria y barrios.
-- Centros comerciales y retail.
-- Automoción y rutas de prueba.
-- Ferias, museos e instalaciones.
-- Educación territorial.
-- Escaparates interactivos.
-
-## Evolución premium Google Maps / 3D Maps
-
-No está implementado en v0.2. Para v0.3/v1.0, Living Map podría conectar con:
-
-- Google Maps JavaScript API;
-- Places API;
-- Routes API;
-- Directions;
-- Street View;
-- Map IDs;
-- 3D Maps / Photorealistic 3D Tiles;
-- geocoding;
-- fichas reales de lugares;
-- horarios, reviews y reservas.
-
-Valor comercial:
-
-- rutas reales;
-- datos vivos;
-- navegación;
-- Street View como transición inmersiva;
-- 3D para turismo, inmobiliaria premium y retail territorial.
-
-Límites:
-
-- API key;
-- coste;
-- restricciones de uso;
-- privacidad;
-- necesidad de Map ID;
-- no depender de Google para el MVP.
+- La cámara solo se solicita tras una pantalla explicativa y por acción del usuario.
+- Todo el procesamiento (MediaPipe) ocurre en el dispositivo; ninguna imagen se envía ni se guarda.
+- La experiencia completa funciona sin cámara (fallback táctil/ratón nativo del mapa).
+- Si `getUserMedia` falla, la experiencia degrada automáticamente a modo táctil con aviso.
 
 ## Desarrollo
 
 ```bash
 npm install
 npm run dev
-# http://localhost:5173/map-gesture-controls/living-map.html
+# → http://localhost:5173/map-gesture-controls/living-map.html
 ```
 
-El build de demos (`npm run docs:build-demos`) incluye `living-map.html`, por lo que al desplegar GitHub Pages queda en:
+El build de demos (`npm run docs:build-demos`) incluye `living-map.html`, por lo que al desplegar GitHub Pages queda en `/map-gesture-controls/demo/living-map.html`.
 
-```text
-/map-gesture-controls/demo/living-map.html
-```
+## Estado
 
-## Pendiente para v0.3
-
-- Validar gestos con webcam física en kiosk o móvil.
-- Añadir imágenes o vídeo por POI.
-- Integrar QR real de continuidad.
-- Crear segundo JSON sectorial: retail o inmobiliaria.
-- Conectar analytics real si el cliente lo pide.
-- Evaluar Google Maps/Places/Routes/Street View/3D si hay presupuesto y caso comercial.
+v0.1 — experiencia funcional con demo de turismo. Pendiente: assets de imagen por POI, QR de recompensa conectado al sistema QR/landing de Rubik, analytics reales y segundo config sectorial (retail o inmobiliaria).

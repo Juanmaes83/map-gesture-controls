@@ -61,6 +61,7 @@ export default defineConfig({
         index: resolve(root, 'examples/index.html'),
         examples: resolve(root, 'examples/examples.html'),
         'living-map': resolve(root, 'examples/living-map.html'),
+        'batuta-torrevieja': resolve(root, 'examples/batuta-torrevieja.html'),
       },
     },
   },

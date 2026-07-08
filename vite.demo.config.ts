@@ -59,6 +59,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         'living-map': resolve(root, 'examples/living-map.html'),
+        'batuta-torrevieja': resolve(root, 'examples/batuta-torrevieja.html'),
         'demo-basic': resolve(root, 'examples/demo-basic.html'),
         'demo-controls-overview': resolve(
           root,

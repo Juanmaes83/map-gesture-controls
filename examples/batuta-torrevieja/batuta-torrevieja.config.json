@@ -1,0 +1,127 @@
+{
+  "schema": "rubik-experience-config/v0.2",
+  "id": "batuta-torrevieja-v0-2",
+  "module": "batuta-torrevieja-premium-map",
+  "engine": "map-gesture-controls",
+  "vertical": "tourism",
+  "brand": {
+    "name": "La Batuta de Torrevieja",
+    "slug": "batuta-torrevieja",
+    "claim": "Torrevieja responde a tus manos",
+    "logoText": "BT",
+    "palette": {
+      "primary": "#0b3548",
+      "accent": "#f2a6b3",
+      "background": "#071521",
+      "surface": "#102638",
+      "text": "#fff7ea"
+    }
+  },
+  "map": {
+    "center": [-0.6819, 37.9787],
+    "zoom": 13.2,
+    "minZoom": 11,
+    "maxZoom": 18,
+    "unlockZoom": 14.6
+  },
+  "narrative": {
+    "welcomeTitle": "La Batuta de Torrevieja",
+    "welcomeSubtitle": "Levanta la mano, despierta lugares y compón tu ruta viva por Torrevieja.",
+    "welcomeCta": "Empezar con cámara",
+    "privacyTitle": "Tu cámara, solo para tus gestos",
+    "privacyBody": "La cámara solo sirve para leer tus gestos. No grabamos ni guardamos tu imagen. También puedes vivir la experiencia sin cámara.",
+    "privacyAccept": "Activar gestos con cámara",
+    "privacyFallback": "Vivirla sin cámara",
+    "exploreHint": "Levanta la mano. Puno o pinza con una mano para dirigir. Dos manos abiertas para acercar. Entra en una nota para despertarla.",
+    "fallbackHint": "Modo sin cámara: arrastra el mapa, haz zoom y entra en cada nota para despertar la ciudad.",
+    "unlockToast": "Nota despierta: {name}",
+    "rewardTitle": "Mi Sinfonía de Torrevieja",
+    "rewardBody": "La ciudad que despertaste ya tiene forma de ruta viva. Guarda tu tarjeta y compártela.",
+    "rewardShareTitle": "La ciudad que desperté"
+  },
+  "categories": [
+    { "id": "mar", "label": "Mar", "emoji": "🌊" },
+    { "id": "sal", "label": "Salinas", "emoji": "🦩" },
+    { "id": "memoria", "label": "Memoria", "emoji": "⚓" },
+    { "id": "sabor", "label": "Sabor", "emoji": "🍤" }
+  ],
+  "pois": [
+    {
+      "id": "laguna-rosa",
+      "name": "Laguna Rosa",
+      "category": "sal",
+      "emoji": "🦩",
+      "lonLat": [-0.715, 38.005],
+      "radiusM": 900,
+      "description": "Primera nota: una lámina rosa de sal, luz y flamencos. Aquí Torrevieja no se mira: se escucha en silencio."
+    },
+    {
+      "id": "playa-del-cura",
+      "name": "Playa del Cura",
+      "category": "mar",
+      "emoji": "🌊",
+      "lonLat": [-0.6797, 37.9748],
+      "radiusM": 500,
+      "description": "Nota de orilla: paseo, espuma y luz mediterránea. La ciudad baja al mar y empieza a marcar el ritmo."
+    },
+    {
+      "id": "puerto-marina",
+      "name": "Puerto y Paseo Marítimo",
+      "category": "sabor",
+      "emoji": "⛵",
+      "lonLat": [-0.6835, 37.9695],
+      "radiusM": 550,
+      "description": "Nota marinera: barcas, terrazas y cocina de mar. Cada paso huele a sal, arroz y memoria de puerto."
+    },
+    {
+      "id": "museo-mar-sal",
+      "name": "Museo del Mar y de la Sal",
+      "category": "memoria",
+      "emoji": "⚓",
+      "lonLat": [-0.6822, 37.9762],
+      "radiusM": 450,
+      "description": "Nota de memoria: la sal cuenta cómo nació la ciudad. Una historia pequeña, blanca y poderosa."
+    },
+    {
+      "id": "parque-molino-agua",
+      "name": "Parque del Molino del Agua",
+      "category": "sal",
+      "emoji": "🌲",
+      "lonLat": [-0.662, 38.008],
+      "radiusM": 700,
+      "description": "Nota de sombra: dunas, pinada y brisa. La ciudad respira antes de volver al azul."
+    },
+    {
+      "id": "playa-la-mata",
+      "name": "Playa de La Mata",
+      "category": "mar",
+      "emoji": "🏖️",
+      "lonLat": [-0.654, 38.029],
+      "radiusM": 800,
+      "description": "Nota abierta: arena larga, mar claro y vida local. La ruta termina mirando lejos."
+    }
+  ],
+  "reward": {
+    "threshold": 4,
+    "type": "download",
+    "code": "RUTA-VIVA-26",
+    "message": "Presenta esta ruta en la Oficina de Turismo o úsala como punto de partida para reservar tu experiencia mediterránea.",
+    "ctaPrimary": {
+      "label": "Reservar mi ruta viva",
+      "href": "https://turismodetorrevieja.com"
+    },
+    "ctaSecondary": {
+      "label": "Enviar por WhatsApp",
+      "href": "https://wa.me/?text=He%20despertado%20mi%20Ruta%20Viva%20de%20Torrevieja%20%F0%9F%8C%8A%20Codigo%3A%20RUTA-VIVA-26"
+    },
+    "shareText": "He despertado mi Ruta Viva de Torrevieja: mar, salinas, memoria y luz mediterránea."
+  },
+  "display": {
+    "kiosk": false,
+    "attractIdleMs": 45000
+  },
+  "meta": {
+    "status": "demo-v0.2",
+    "notes": "La Batuta de Torrevieja. Configuración de demostración con coordenadas aproximadas reales y narrativa premium de ciudad/sinfonía."
+  }
+}

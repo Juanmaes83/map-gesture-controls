@@ -1,11 +1,11 @@
 /**
- * Living Map Experience — experience engine.
+ * Living Map Experience v0.2 - La Batuta de Torrevieja.
  *
- * Turns map-gesture-controls into a branded, sector-configurable discovery
- * experience: welcome → privacy → gesture exploration → POI unlocks → reward.
+ * A premium branded ritual on top of map-gesture-controls:
+ * welcome -> trust -> tutorial -> gesture/touch exploration -> POI unlocks -> lovemark reward.
  *
- * All camera processing stays on-device (MediaPipe in-browser); the module
- * works fully without a camera via the touch/mouse fallback.
+ * Camera processing stays on-device (MediaPipe in-browser). The experience has
+ * a full touch/mouse fallback with the same unlock and reward path.
  */
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
@@ -29,6 +29,7 @@ type ExperienceMode = 'gesture' | 'touch';
 
 interface ExperienceState {
   mode: ExperienceMode;
+  cameraActive: boolean;
   unlocked: Set<string>;
   rewardShown: boolean;
   controller: GestureMapController | null;
@@ -36,6 +37,7 @@ interface ExperienceState {
 
 const state: ExperienceState = {
   mode: 'touch',
+  cameraActive: false,
   unlocked: new Set(),
   rewardShown: false,
   controller: null,
@@ -61,13 +63,12 @@ function applyBrand(config: LivingMapConfig): void {
   root.style.setProperty('--lm-surface', p.surface);
   root.style.setProperty('--lm-text', p.text);
 
-  document.title = `${config.brand.name} — Living Map Experience`;
+  document.title = `${config.brand.name} - La Batuta de Torrevieja`;
   $('brand-logo').textContent = config.brand.logoText;
   $('brand-name').textContent = config.brand.name;
   $('brand-claim').textContent = config.brand.claim;
   $('welcome-title').textContent = config.narrative.welcomeTitle;
   $('welcome-subtitle').textContent = config.narrative.welcomeSubtitle;
-  $('btn-welcome').textContent = config.narrative.welcomeCta;
   $('privacy-title').textContent = config.narrative.privacyTitle;
   $('privacy-body').textContent = config.narrative.privacyBody;
   $('btn-camera').textContent = config.narrative.privacyAccept;
@@ -86,18 +87,18 @@ function applyBrand(config: LivingMapConfig): void {
 
 function poiStyle(poi: LivingMapPoi, unlocked: boolean): Style {
   const css = getComputedStyle(document.documentElement);
-  const accent = css.getPropertyValue('--lm-accent').trim() || '#f4b942';
-  const primary = css.getPropertyValue('--lm-primary').trim() || '#0e7c8c';
+  const accent = css.getPropertyValue('--lm-accent').trim() || '#f2a6b3';
+  const primary = css.getPropertyValue('--lm-primary').trim() || '#09324a';
   return new Style({
     image: new CircleStyle({
-      radius: unlocked ? 22 : 16,
+      radius: unlocked ? 24 : 17,
       fill: new Fill({ color: unlocked ? accent : primary }),
-      stroke: new Stroke({ color: '#ffffff', width: unlocked ? 4 : 2 }),
+      stroke: new Stroke({ color: '#fff7ea', width: unlocked ? 5 : 2 }),
     }),
     text: new Text({
-      text: unlocked ? '✓' : poi.emoji,
-      font: unlocked ? 'bold 20px system-ui' : '16px system-ui',
-      fill: new Fill({ color: unlocked ? '#1a1a1a' : '#ffffff' }),
+      text: unlocked ? '♪' : poi.emoji,
+      font: unlocked ? 'bold 22px system-ui' : '17px system-ui',
+      fill: new Fill({ color: unlocked ? '#18212f' : '#fff7ea' }),
     }),
   });
 }
@@ -106,12 +107,31 @@ function showToast(message: string): void {
   const toast = $('toast');
   toast.textContent = message;
   toast.classList.add('visible');
-  window.setTimeout(() => toast.classList.remove('visible'), 3200);
+  window.setTimeout(() => toast.classList.remove('visible'), 3600);
+}
+
+function setHudStatus(
+  config: LivingMapConfig,
+  gesture = 'Esperando batuta',
+): void {
+  $('hud-camera').textContent = state.cameraActive
+    ? 'Camara activa'
+    : 'Camara inactiva';
+  $('hud-hand').textContent =
+    state.mode === 'gesture'
+      ? 'Mira el recuadro: ahi ves la mano'
+      : 'Modo sin camara listo';
+  $('hud-gesture').textContent = `Gesto: ${gesture}`;
+  const hint =
+    state.mode === 'gesture'
+      ? config.narrative.exploreHint
+      : config.narrative.fallbackHint;
+  $('hud-hint').textContent = hint;
 }
 
 function updateProgress(config: LivingMapConfig): void {
   $('hud-progress').textContent =
-    `${state.unlocked.size}/${config.pois.length} descubiertos`;
+    `${state.unlocked.size}/${config.pois.length} notas despiertas`;
   const pct = (state.unlocked.size / config.pois.length) * 100;
   ($('hud-progress-bar').firstElementChild as HTMLElement).style.width =
     `${pct}%`;
@@ -125,7 +145,13 @@ function showPoiCard(poi: LivingMapPoi, config: LivingMapConfig): void {
     ? `${cat.emoji} ${cat.label}`
     : poi.category;
   $('card-description').textContent = poi.description;
+  $('card-progress').textContent =
+    `Nota ${state.unlocked.size} de ${config.pois.length} en tu sinfonia`;
   $('poi-card').classList.add('visible');
+}
+
+function getUnlockedPois(config: LivingMapConfig): LivingMapPoi[] {
+  return config.pois.filter((poi) => state.unlocked.has(poi.id));
 }
 
 function buildRewardCard(config: LivingMapConfig): string {
@@ -135,39 +161,65 @@ function buildRewardCard(config: LivingMapConfig): string {
   const ctx = canvas.getContext('2d');
   if (!ctx) return '';
   const p = config.brand.palette;
+  const unlocked = getUnlockedPois(config);
 
-  ctx.fillStyle = p.background;
+  const gradient = ctx.createLinearGradient(0, 0, 1080, 1350);
+  gradient.addColorStop(0, p.background);
+  gradient.addColorStop(0.55, '#102d3f');
+  gradient.addColorStop(1, '#3b2532');
+  ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, 1080, 1350);
-  ctx.fillStyle = p.primary;
-  ctx.fillRect(0, 0, 1080, 260);
-  ctx.fillStyle = p.text;
-  ctx.font = 'bold 64px system-ui';
-  ctx.fillText(config.brand.name, 60, 120);
-  ctx.font = '36px system-ui';
-  ctx.fillText(config.brand.claim, 60, 190);
 
-  ctx.fillStyle = p.text;
-  ctx.font = 'bold 48px system-ui';
-  ctx.fillText('Mi ruta completada', 60, 360);
-
-  ctx.font = '40px system-ui';
-  let y = 450;
-  for (const poi of config.pois) {
-    const mark = state.unlocked.has(poi.id) ? '✓' : '·';
-    ctx.fillStyle = state.unlocked.has(poi.id) ? p.accent : '#667';
-    ctx.fillText(`${mark}  ${poi.emoji}  ${poi.name}`, 60, y);
-    y += 70;
+  ctx.fillStyle = 'rgba(255,247,234,0.08)';
+  for (let i = 0; i < 9; i += 1) {
+    ctx.beginPath();
+    ctx.arc(160 + i * 120, 220 + (i % 3) * 165, 120, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   ctx.fillStyle = p.accent;
-  ctx.fillRect(60, y + 20, 960, 160);
-  ctx.fillStyle = '#1a1a1a';
-  ctx.font = 'bold 56px system-ui';
-  ctx.fillText(config.reward.code, 100, y + 120);
+  ctx.fillRect(0, 0, 1080, 18);
+  ctx.font = 'bold 42px system-ui';
+  ctx.fillStyle = p.accent;
+  ctx.fillText(config.brand.name.toUpperCase(), 72, 96);
 
-  ctx.fillStyle = '#8899aa';
+  ctx.fillStyle = '#fff7ea';
+  ctx.font = 'bold 76px system-ui';
+  ctx.fillText('Mi Ruta Viva', 72, 210);
+  ctx.fillText('de Torrevieja', 72, 300);
+
+  ctx.font = '34px system-ui';
+  ctx.fillStyle = 'rgba(255,247,234,0.82)';
+  ctx.fillText('La ciudad que despertaste con tus manos.', 72, 370);
+
+  ctx.fillStyle = 'rgba(255,247,234,0.10)';
+  ctx.fillRect(72, 440, 936, 460);
+  ctx.strokeStyle = 'rgba(255,247,234,0.28)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(72, 440, 936, 460);
+
+  ctx.font = 'bold 34px system-ui';
+  ctx.fillStyle = p.accent;
+  ctx.fillText('Notas desbloqueadas', 112, 510);
+
+  ctx.font = '32px system-ui';
+  let y = 585;
+  for (const poi of unlocked) {
+    ctx.fillStyle = '#fff7ea';
+    ctx.fillText(`${poi.emoji}  ${poi.name}`, 112, y);
+    y += 58;
+  }
+
+  ctx.fillStyle = p.accent;
+  ctx.fillRect(72, 972, 936, 150);
+  ctx.fillStyle = '#18212f';
+  ctx.font = 'bold 48px system-ui';
+  ctx.fillText(config.reward.code, 112, 1065);
+
+  ctx.fillStyle = 'rgba(255,247,234,0.78)';
   ctx.font = '28px system-ui';
-  ctx.fillText('Living Map Experience — Rubik Sota', 60, 1290);
+  ctx.fillText('Comparte tu sinfonia mediterranea.', 72, 1210);
+  ctx.fillText('Living Map Experience - Rubik Sota', 72, 1272);
   return canvas.toDataURL('image/png');
 }
 
@@ -180,6 +232,14 @@ function showReward(config: LivingMapConfig): void {
   $('reward-code').textContent = config.reward.code;
   $('reward-message').textContent = config.reward.message;
 
+  const rewardUnlocked = $('reward-unlocked');
+  rewardUnlocked.innerHTML = '';
+  for (const poi of getUnlockedPois(config)) {
+    const item = document.createElement('span');
+    item.textContent = `${poi.emoji} ${poi.name}`;
+    rewardUnlocked.appendChild(item);
+  }
+
   const primary = $('reward-cta-primary') as HTMLAnchorElement;
   primary.textContent = config.reward.ctaPrimary.label;
   primary.href = config.reward.ctaPrimary.href;
@@ -188,7 +248,10 @@ function showReward(config: LivingMapConfig): void {
   secondary.href = config.reward.ctaSecondary.href;
 
   $('screen-reward').classList.add('visible');
-  emit('reward', { code: config.reward.code, unlocked: [...state.unlocked] });
+  emit('reward_unlock', {
+    code: config.reward.code,
+    unlocked: [...state.unlocked],
+  });
 }
 
 function unlockPoi(
@@ -199,9 +262,12 @@ function unlockPoi(
   state.unlocked.add(poi.id);
   feature.setStyle(poiStyle(poi, true));
   updateProgress(config);
+  setHudStatus(config, 'Nota despierta');
   showToast(config.narrative.unlockToast.replace('{name}', poi.name));
   showPoiCard(poi, config);
-  emit('unlock', { poi: poi.id, total: state.unlocked.size });
+  document.body.classList.add('poi-pulse');
+  window.setTimeout(() => document.body.classList.remove('poi-pulse'), 900);
+  emit('poi_unlock', { poi: poi.id, total: state.unlocked.size });
 
   if (state.unlocked.size >= config.reward.threshold) {
     window.setTimeout(() => showReward(config), 1800);
@@ -217,14 +283,17 @@ async function startGestures(
       map,
       webcam: {
         position: 'bottom-left',
-        width: 220,
-        height: 165,
-        opacity: 0.8,
+        width: 260,
+        height: 195,
+        opacity: 0.9,
       },
+      debug: false,
     });
     await state.controller.start();
     state.mode = 'gesture';
-    emit('start', { mode: 'gesture', config: config.id });
+    state.cameraActive = true;
+    emit('camera_start', { config: config.id });
+    setHudStatus(config, 'Despertar');
     return true;
   } catch (err) {
     console.warn(
@@ -232,21 +301,61 @@ async function startGestures(
       err,
     );
     state.controller = null;
+    state.cameraActive = false;
     return false;
   }
 }
 
+function hideScreens(): void {
+  ['screen-welcome', 'screen-privacy', 'screen-tutorial'].forEach((id) =>
+    $(id).classList.remove('visible'),
+  );
+}
+
+function openTutorial(): void {
+  $('screen-tutorial').classList.add('visible');
+  emit('tutorial_open');
+}
+
+function enterPrivacy(): void {
+  $('screen-welcome').classList.remove('visible');
+  $('screen-privacy').classList.add('visible');
+}
+
 function enterExplore(config: LivingMapConfig): void {
-  $('screen-privacy').classList.remove('visible');
+  hideScreens();
   $('hud').classList.add('visible');
-  const hint =
-    state.mode === 'gesture'
-      ? config.narrative.exploreHint
-      : config.narrative.fallbackHint;
-  $('hud-hint').textContent = hint;
-  $('hud-mode').textContent =
-    state.mode === 'gesture' ? '🖐 Gestos' : '👆 Táctil';
-  window.setTimeout(() => $('hud-hint').classList.add('faded'), 12000);
+  setHudStatus(config, state.mode === 'gesture' ? 'Despertar' : 'Explorar');
+  $('hud-hint').classList.remove('faded');
+  window.setTimeout(() => $('hud-hint').classList.add('faded'), 16000);
+}
+
+function useFallback(config: LivingMapConfig): void {
+  state.mode = 'touch';
+  state.cameraActive = false;
+  emit('fallback_used', { config: config.id });
+  enterExplore(config);
+  showToast('Modo sin camara: arrastra, acerca y despierta notas');
+}
+
+function updateGestureHudFromOverlay(config: LivingMapConfig): void {
+  if (state.mode !== 'gesture') return;
+  const badge = document.querySelector('.ol-gesture-badge');
+  const raw = badge?.textContent?.trim().toLowerCase() || 'idle';
+  const labels: Record<string, string> = {
+    idle: 'Escuchando',
+    pan: 'Dirigir',
+    panning: 'Dirigir',
+    zoom: 'Acercar',
+    zooming: 'Acercar',
+    rotate: 'Girar',
+    rotating: 'Girar',
+  };
+  const label = labels[raw] || 'Escuchando';
+  $('hud-gesture').textContent = `Gesto: ${label}`;
+  if (label !== 'Escuchando') {
+    emit('gesture_hint', { gesture: label });
+  }
 }
 
 async function init(): Promise<void> {
@@ -277,8 +386,6 @@ async function init(): Promise<void> {
   }
   map.addLayer(new VectorLayer({ source }));
 
-  // Unlock check: the user "arrives" at a POI when the map center is close
-  // enough at a sufficient zoom level — same rule for gestures and touch.
   map.on('moveend', () => {
     const view = map.getView();
     const zoom = view.getZoom() ?? 0;
@@ -296,12 +403,12 @@ async function init(): Promise<void> {
     }
   });
 
-  // Tapping/clicking a marker flies to it (assistive shortcut in both modes).
   map.on('singleclick', (evt) => {
     map.forEachFeatureAtPixel(evt.pixel, (featureLike) => {
       const id = featureLike.getId();
       const poi = config.pois.find((p) => p.id === id);
       if (poi) {
+        setHudStatus(config, 'Desbloquear');
         map.getView().animate({
           center: fromLonLat(poi.lonLat),
           zoom: Math.max(
@@ -316,50 +423,57 @@ async function init(): Promise<void> {
   });
 
   updateProgress(config);
+  setHudStatus(config);
 
-  // Screen flow
-  $('btn-welcome').addEventListener('click', () => {
-    $('screen-welcome').classList.remove('visible');
-    $('screen-privacy').classList.add('visible');
-    emit('welcome', { config: config.id });
+  $('btn-start-camera').addEventListener('click', enterPrivacy);
+  $('btn-open-tutorial').addEventListener('click', openTutorial);
+  $('hud-help').addEventListener('click', openTutorial);
+
+  $('btn-start-fallback').addEventListener('click', () => useFallback(config));
+  $('btn-tutorial-fallback').addEventListener('click', () =>
+    useFallback(config),
+  );
+  $('hud-fallback').addEventListener('click', () => useFallback(config));
+
+  $('btn-tutorial-close').addEventListener('click', () =>
+    $('screen-tutorial').classList.remove('visible'),
+  );
+  $('btn-tutorial-camera').addEventListener('click', () => {
+    $('screen-tutorial').classList.remove('visible');
+    enterPrivacy();
   });
 
   $('btn-camera').addEventListener('click', async () => {
     const btn = $('btn-camera') as HTMLButtonElement;
     btn.disabled = true;
-    btn.textContent = 'Activando cámara…';
+    btn.textContent = 'Activando camara...';
     const ok = await startGestures(map, config);
     if (!ok) {
-      showToast('Cámara no disponible: seguimos en modo táctil');
-      state.mode = 'touch';
-      emit('start', { mode: 'touch-fallback', config: config.id });
+      showToast('Camara no disponible: seguimos en modo sin camara');
+      useFallback(config);
+      return;
     }
     enterExplore(config);
   });
 
-  $('btn-fallback').addEventListener('click', () => {
-    state.mode = 'touch';
-    emit('start', { mode: 'touch', config: config.id });
-    enterExplore(config);
-  });
+  $('btn-fallback').addEventListener('click', () => useFallback(config));
 
   $('card-close').addEventListener('click', () =>
     $('poi-card').classList.remove('visible'),
   );
 
-  // Reward actions
   $('reward-copy').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(config.reward.code);
-      showToast('Código copiado');
+      showToast('Codigo copiado');
     } catch {
-      showToast(`Tu código: ${config.reward.code}`);
+      showToast(`Tu codigo: ${config.reward.code}`);
     }
   });
 
   $('reward-share').addEventListener('click', async () => {
     const shareData = {
-      title: config.brand.name,
+      title: config.narrative.rewardTitle,
       text: config.reward.shareText,
       url: window.location.href,
     };
@@ -372,7 +486,7 @@ async function init(): Promise<void> {
         );
         showToast('Texto copiado para compartir');
       }
-      emit('share', { config: config.id });
+      emit('share', { config: config.id, unlocked: [...state.unlocked] });
     } catch {
       /* user cancelled share */
     }
@@ -383,16 +497,19 @@ async function init(): Promise<void> {
     if (!dataUrl) return;
     const a = document.createElement('a');
     a.href = dataUrl;
-    a.download = `${config.brand.slug}-ruta.png`;
+    a.download = `${config.brand.slug}-ruta-viva.png`;
     a.click();
-    emit('download', { config: config.id });
+    emit('download', { config: config.id, unlocked: [...state.unlocked] });
   });
 
   $('reward-continue').addEventListener('click', () =>
     $('screen-reward').classList.remove('visible'),
   );
 
-  // Kiosk mode: restart button + attract reset when idle.
+  ['reward-cta-primary', 'reward-cta-secondary'].forEach((id) => {
+    $(id).addEventListener('click', () => emit('cta_click', { id }));
+  });
+
   if (config.display.kiosk) {
     document.body.classList.add('kiosk');
     $('hud-reset').classList.add('visible');
@@ -412,9 +529,9 @@ async function init(): Promise<void> {
   }
   $('hud-reset').addEventListener('click', () => window.location.reload());
 
+  window.setInterval(() => updateGestureHudFromOverlay(config), 900);
   emit('ready', { config: config.id, pois: config.pois.length });
 
-  // Integration handle for kiosk diagnostics, QA and future analytics bridges.
   (window as unknown as Record<string, unknown>).livingMap = {
     map,
     config,
@@ -423,7 +540,7 @@ async function init(): Promise<void> {
 }
 
 init().catch((err) => {
-  console.error('[living-map] init failed', err);
+  console.error('[batuta-torrevieja] init failed', err);
   const el = document.getElementById('toast');
   if (el) {
     el.textContent = 'No se pudo iniciar la experiencia. Revisa la consola.';
