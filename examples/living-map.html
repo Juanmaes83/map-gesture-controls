@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Living Map Experience: explora un destino con las manos. Mapa gestual personalizable por marca con puntos de interés, recompensas y modo escaparate."
+      content="La Batuta de la Ciudad — Living Map Experience: dirige un destino con las manos. Mapa gestual personalizable por marca con tutorial de gestos, puntos de interés, recompensa y modo escaparate."
     />
-    <title>Living Map Experience</title>
+    <title>Living Map Experience — La Batuta de la Ciudad</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/ol@10.2.1/ol.css"
@@ -22,10 +22,19 @@
       <div class="lm-hud-top">
         <span class="lm-chip brand" id="hud-brand">Marca</span>
         <span class="lm-chip">
-          <span id="hud-progress">0/0 descubiertos</span>
+          <span id="hud-progress">0/0 despertados</span>
           <span id="hud-progress-bar"><span></span></span>
         </span>
         <span class="lm-chip" id="hud-mode">👆 Táctil</span>
+        <span class="lm-chip" id="hud-mode-live" style="display: none"></span>
+        <span class="lm-hand-chip" id="hand-chip-left" style="display: none">
+          <span class="lm-hand-chip-label">Izq.</span>
+          <span class="lm-hand-chip-gesture">—</span>
+        </span>
+        <span class="lm-hand-chip" id="hand-chip-right" style="display: none">
+          <span class="lm-hand-chip-label">Der.</span>
+          <span class="lm-hand-chip-gesture">—</span>
+        </span>
         <span id="hud-categories"></span>
       </div>
       <div id="hud-hint"></div>
@@ -40,17 +49,20 @@
       <div id="card-emoji"></div>
       <h2 id="card-title"></h2>
       <span id="card-category"></span>
+      <p id="card-note"></p>
       <p id="card-description"></p>
     </aside>
 
     <!-- Toast -->
     <div id="toast" role="status"></div>
 
-    <!-- Welcome screen -->
+    <!-- Welcome / wake screen -->
     <section class="lm-screen visible" id="screen-welcome">
       <div class="lm-screen-inner">
         <div class="lm-logo" id="brand-logo">LM</div>
         <div class="lm-brand-name" id="brand-name">Living Map</div>
+        <p class="lm-eyebrow" id="wake-eyebrow"></p>
+        <p class="lm-lede" id="wake-lede"></p>
         <h1 class="lm-title" id="welcome-title">Living Map Experience</h1>
         <p class="lm-subtitle" id="welcome-subtitle"></p>
         <p class="lm-claim" id="brand-claim"></p>
@@ -58,28 +70,50 @@
       </div>
     </section>
 
-    <!-- Privacy screen -->
+    <!-- Privacy / trust screen -->
     <section class="lm-screen" id="screen-privacy">
       <div class="lm-screen-inner">
-        <h1 class="lm-title" id="privacy-title">
-          Tu cámara, solo para tus gestos
-        </h1>
+        <h1 class="lm-title" id="privacy-title">Tu cámara es tu batuta</h1>
         <div class="lm-privacy-note">
           <span aria-hidden="true">🔒</span>
           <span id="privacy-body"></span>
         </div>
         <button class="lm-btn" id="btn-camera">
-          Activar gestos con cámara
+          Activar la batuta (cámara)
         </button>
         <button class="lm-btn ghost" id="btn-fallback">
-          Continuar sin cámara
+          Dirigir con el dedo (sin cámara)
         </button>
+      </div>
+    </section>
+
+    <!-- Gesture tutorial screen -->
+    <section class="lm-screen" id="screen-tutorial">
+      <div class="lm-screen-inner wide">
+        <h1 class="lm-title" id="tutorial-title">Aprende a dirigir</h1>
+        <p class="lm-subtitle" id="tutorial-subtitle"></p>
+        <div class="lm-tutorial-steps" id="tutorial-steps"></div>
+        <div class="lm-tutorial-actions">
+          <button class="lm-btn ghost" id="btn-tutorial-skip"></button>
+          <button class="lm-btn" id="btn-tutorial-continue"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Touch fallback tutorial screen -->
+    <section class="lm-screen" id="screen-tutorial-touch">
+      <div class="lm-screen-inner">
+        <div class="lm-touch-icon" aria-hidden="true">👆</div>
+        <h1 class="lm-title" id="tutorial-touch-title">Tu ritual sin cámara</h1>
+        <p class="lm-subtitle" id="tutorial-touch-body"></p>
+        <button class="lm-btn" id="btn-tutorial-touch-continue"></button>
       </div>
     </section>
 
     <!-- Reward screen -->
     <section class="lm-screen" id="screen-reward">
       <div class="lm-screen-inner">
+        <p class="lm-eyebrow" id="reward-eyebrow"></p>
         <h1 class="lm-title" id="reward-title"></h1>
         <p class="lm-subtitle" id="reward-body"></p>
         <div id="reward-code-box"><span id="reward-code"></span></div>
@@ -99,10 +133,12 @@
           ></a>
         </div>
         <div class="lm-reward-actions">
-          <button class="lm-btn ghost" id="reward-copy">Copiar código</button>
+          <button class="lm-btn ghost" id="reward-copy">
+            Copiar partitura
+          </button>
           <button class="lm-btn ghost" id="reward-share">Compartir</button>
           <button class="lm-btn ghost" id="reward-download">
-            Descargar tarjeta
+            Descargar mi sinfonía
           </button>
           <button class="lm-btn ghost" id="reward-continue">
             Seguir explorando

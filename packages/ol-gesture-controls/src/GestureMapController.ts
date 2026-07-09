@@ -1,5 +1,6 @@
 import type {
   GestureFrame,
+  GestureMode,
   HandLandmark,
   WebcamConfig,
   TuningConfig,
@@ -34,6 +35,7 @@ export class GestureMapController {
     webcam: WebcamConfig;
     tuning: TuningConfig;
     debug: boolean;
+    onFrame?: (frame: GestureFrame | null, mode: GestureMode) => void;
   };
   private gestureController: GestureController;
   private stateMachine: GestureStateMachine;
@@ -62,6 +64,7 @@ export class GestureMapController {
       webcam: webcamConfig,
       tuning: tuningConfig,
       debug: userConfig.debug ?? false,
+      onFrame: userConfig.onFrame,
     };
 
     this.initialZoom = userConfig.map.getView().getZoom() ?? 10;
@@ -135,17 +138,20 @@ export class GestureMapController {
 
     if (this.paused) {
       this.overlay.render(null, 'idle');
+      this.config.onFrame?.(null, 'idle');
       return;
     }
 
     const frame = this.lastFrame;
     if (frame === null) {
       this.overlay.render(null, 'idle');
+      this.config.onFrame?.(null, 'idle');
       return;
     }
 
     const output = this.stateMachine.update(frame);
     this.interaction.apply(output);
+    this.config.onFrame?.(frame, output.mode);
 
     let resetProgress = 0;
     const { leftHand, rightHand, timestamp } = frame;

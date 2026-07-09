@@ -1,12 +1,15 @@
-/* Living Map Experience — premium branded shell.
-   All colors come from CSS variables set at runtime from the brand config. */
+/* Living Map Experience — "La Batuta de la Ciudad" (v0.2).
+   Editorial, cinematic, Mediterranean-premium shell. All colors come from
+   CSS variables set at runtime from the brand config. */
 
 :root {
-  --lm-primary: #0e7c8c;
-  --lm-accent: #f4b942;
-  --lm-bg: #0b1220;
-  --lm-surface: #111c30;
-  --lm-text: #f4f7fb;
+  --lm-primary: #0e6b7a;
+  --lm-accent: #f2a53d;
+  --lm-bg: #0a121c;
+  --lm-surface: #0f1e2d;
+  --lm-text: #f4f2ec;
+  --lm-display-font: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+  --lm-ui-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -18,11 +21,7 @@
 html,
 body {
   height: 100%;
-  font-family:
-    'Segoe UI',
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--lm-ui-font);
   background: var(--lm-bg);
   color: var(--lm-text);
   overflow: hidden;
@@ -44,14 +43,20 @@ body {
   z-index: 40;
   background:
     radial-gradient(
-      ellipse at 30% 20%,
-      color-mix(in srgb, var(--lm-primary) 45%, transparent),
-      transparent 60%
+      ellipse at 30% 15%,
+      color-mix(in srgb, var(--lm-primary) 42%, transparent),
+      transparent 62%
     ),
-    color-mix(in srgb, var(--lm-bg) 88%, transparent);
+    radial-gradient(
+      ellipse at 80% 90%,
+      color-mix(in srgb, var(--lm-accent) 16%, transparent),
+      transparent 55%
+    ),
+    color-mix(in srgb, var(--lm-bg) 90%, transparent);
   backdrop-filter: blur(10px);
   text-align: center;
   padding: 32px;
+  overflow-y: auto;
 }
 
 .lm-screen.visible {
@@ -63,7 +68,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
+  margin: auto;
+}
+
+.lm-screen-inner.wide {
+  max-width: 920px;
 }
 
 .lm-logo {
@@ -74,6 +84,7 @@ body {
   color: #1a1a1a;
   font-size: 34px;
   font-weight: 800;
+  font-family: var(--lm-display-font);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,33 +93,51 @@ body {
 }
 
 .lm-brand-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 4px;
-  opacity: 0.85;
+  opacity: 0.8;
+}
+
+.lm-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--lm-accent);
+  margin-top: 4px;
+}
+
+.lm-lede {
+  font-family: var(--lm-display-font);
+  font-style: italic;
+  font-size: clamp(20px, 2.6vw, 26px);
+  opacity: 0.75;
+  margin-top: -6px;
 }
 
 .lm-title {
-  font-size: clamp(32px, 5vw, 56px);
-  font-weight: 800;
+  font-family: var(--lm-display-font);
+  font-size: clamp(32px, 5vw, 58px);
+  font-weight: 700;
   line-height: 1.08;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
 }
 
 .lm-subtitle {
-  font-size: clamp(16px, 2vw, 21px);
-  line-height: 1.5;
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.55;
   opacity: 0.85;
-  max-width: 520px;
+  max-width: 560px;
 }
 
 .lm-claim {
-  font-size: 14px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-family: var(--lm-display-font);
+  font-style: italic;
+  font-size: 17px;
   color: var(--lm-accent);
-  font-weight: 700;
+  margin-top: 4px;
 }
 
 .lm-btn {
@@ -145,6 +174,22 @@ body {
   padding: 12px 28px;
 }
 
+.lm-btn.ready {
+  animation: lm-pulse-ready 1.4s ease-in-out infinite;
+}
+
+@keyframes lm-pulse-ready {
+  0%,
+  100% {
+    box-shadow: 0 10px 30px
+      color-mix(in srgb, var(--lm-accent) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 10px 44px
+      color-mix(in srgb, var(--lm-accent) 65%, transparent);
+  }
+}
+
 .lm-privacy-note {
   display: flex;
   align-items: flex-start;
@@ -158,6 +203,111 @@ body {
   text-align: left;
   max-width: 560px;
   opacity: 0.95;
+}
+
+.lm-touch-icon {
+  font-size: 52px;
+}
+
+/* ---------- Gesture tutorial ---------- */
+
+.lm-tutorial-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .lm-tutorial-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lm-tutorial-step {
+  background: color-mix(in srgb, var(--lm-surface) 92%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--lm-text) 12%, transparent);
+  border-radius: 20px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+
+.lm-tutorial-step h3 {
+  font-family: var(--lm-display-font);
+  font-size: 17px;
+  margin-top: 4px;
+}
+
+.lm-tutorial-step p {
+  font-size: 13.5px;
+  line-height: 1.5;
+  opacity: 0.85;
+  min-height: 58px;
+}
+
+.lm-step-status {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lm-text) 10%, transparent);
+  opacity: 0.6;
+}
+
+.lm-tutorial-step.done {
+  border-color: var(--lm-accent);
+  background: color-mix(in srgb, var(--lm-accent) 14%, var(--lm-surface));
+}
+
+.lm-tutorial-step.done .lm-step-status {
+  background: var(--lm-accent);
+  color: #1a1a1a;
+  opacity: 1;
+}
+
+.lm-tutorial-step.done .lm-hand-icon-wrap {
+  color: var(--lm-accent);
+  animation: none;
+}
+
+.lm-hand-icon-wrap {
+  color: var(--lm-text);
+  opacity: 0.85;
+  animation: lm-ghost-float 2.6s ease-in-out infinite;
+}
+
+.lm-hand-icon {
+  width: 56px;
+  height: 56px;
+}
+
+@keyframes lm-ghost-float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translateY(-6px) scale(1.06);
+    opacity: 1;
+  }
+}
+
+.lm-tutorial-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 6px;
 }
 
 /* ---------- HUD ---------- */
@@ -181,7 +331,7 @@ body {
   right: 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -203,10 +353,45 @@ body {
 .lm-chip.brand {
   background: var(--lm-primary);
   border-color: transparent;
+  font-family: var(--lm-display-font);
+}
+
+.lm-hand-chip {
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: color-mix(in srgb, var(--lm-surface) 92%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--lm-text) 14%, transparent);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.lm-hand-chip-label {
+  opacity: 0.65;
+  font-weight: 600;
+}
+
+.lm-hand-chip.detected {
+  border-color: color-mix(in srgb, var(--lm-primary) 70%, white 10%);
+}
+
+.lm-hand-chip.active {
+  border-color: var(--lm-accent);
+  background: color-mix(in srgb, var(--lm-accent) 20%, var(--lm-surface));
+}
+
+.lm-hand-chip.active .lm-hand-chip-gesture {
+  color: var(--lm-accent);
 }
 
 #hud-progress-bar {
-  width: 110px;
+  width: 100px;
   height: 6px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--lm-text) 18%, transparent);
@@ -250,7 +435,9 @@ body {
   text-align: center;
   line-height: 1.5;
   backdrop-filter: blur(8px);
-  transition: opacity 0.8s ease;
+  transition:
+    opacity 0.5s ease,
+    transform 0.3s ease;
 }
 
 #hud-hint.faded {
@@ -302,8 +489,9 @@ body {
 }
 
 #card-title {
-  font-size: 22px;
-  font-weight: 800;
+  font-family: var(--lm-display-font);
+  font-size: 23px;
+  font-weight: 700;
   margin-top: 6px;
 }
 
@@ -317,11 +505,19 @@ body {
   letter-spacing: 1.5px;
 }
 
+#card-note {
+  font-family: var(--lm-display-font);
+  font-style: italic;
+  font-size: 13.5px;
+  opacity: 0.7;
+  margin-top: 8px;
+}
+
 #card-description {
-  margin-top: 10px;
+  margin-top: 8px;
   font-size: 15px;
   line-height: 1.55;
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
 #card-close {
@@ -342,8 +538,9 @@ body {
   background: var(--lm-accent);
   color: #1a1a1a;
   font-weight: 800;
-  font-size: clamp(22px, 4vw, 34px);
-  letter-spacing: 2px;
+  font-family: var(--lm-display-font);
+  font-size: clamp(22px, 4vw, 32px);
+  letter-spacing: 1.5px;
   border-radius: 16px;
   padding: 18px 34px;
 }
@@ -388,17 +585,32 @@ body {
   transform: translate(-50%, 0);
 }
 
-/* ---------- Kiosk mode ---------- */
+/* ---------- Kiosk mode (readable at ~3m) ---------- */
 
 body.kiosk .lm-title {
-  font-size: clamp(44px, 6vw, 72px);
+  font-size: clamp(46px, 6vw, 76px);
+}
+
+body.kiosk .lm-subtitle {
+  font-size: 22px;
 }
 
 body.kiosk .lm-btn {
-  font-size: 22px;
+  font-size: 23px;
   padding: 20px 44px;
 }
 
 body.kiosk #hud-hint {
-  font-size: 18px;
+  font-size: 19px;
+  padding: 18px 28px;
+}
+
+body.kiosk .lm-chip,
+body.kiosk .lm-hand-chip {
+  font-size: 16px;
+  padding: 12px 20px;
+}
+
+body.kiosk .lm-tutorial-step p {
+  font-size: 15px;
 }

@@ -1,20 +1,20 @@
 {
-  "schema": "rubik-experience-config/v0.1",
+  "schema": "rubik-experience-config/v0.2",
   "id": "living-map-demo-torrevieja",
   "module": "living-map-experience",
   "engine": "map-gesture-controls",
   "vertical": "tourism",
   "brand": {
-    "name": "Vive Torrevieja",
-    "slug": "vive-torrevieja",
-    "claim": "El destino que responde a tus manos",
-    "logoText": "VT",
+    "name": "La Batuta de Torrevieja",
+    "slug": "batuta-torrevieja",
+    "claim": "Levanta la mano. La ciudad empieza a escucharte.",
+    "logoText": "TV",
     "palette": {
-      "primary": "#0e7c8c",
-      "accent": "#f4b942",
-      "background": "#0b1220",
-      "surface": "#111c30",
-      "text": "#f4f7fb"
+      "primary": "#0e6b7a",
+      "accent": "#f2a53d",
+      "background": "#0a121c",
+      "surface": "#0f1e2d",
+      "text": "#f4f2ec"
     }
   },
   "map": {
@@ -25,24 +25,62 @@
     "unlockZoom": 14.6
   },
   "narrative": {
-    "welcomeTitle": "Descubre Torrevieja sin tocar nada",
-    "welcomeSubtitle": "Explora el mapa con tus manos, encuentra los lugares imprescindibles y desbloquea tu recompensa.",
-    "welcomeCta": "Empezar la experiencia",
-    "privacyTitle": "Tu camara, solo para tus gestos",
-    "privacyBody": "Usamos la camara unicamente para detectar tus manos y mover el mapa. Todo se procesa en este dispositivo: ninguna imagen se envia ni se guarda. Puedes explorar tambien sin camara.",
-    "privacyAccept": "Activar gestos con camara",
-    "privacyFallback": "Continuar sin camara",
-    "exploreHint": "Puno o pinza con la mano izquierda para moverte. Mano derecha arriba/abajo para acercarte. Acercate a un punto para desbloquearlo.",
-    "fallbackHint": "Arrastra el mapa y haz zoom para acercarte a cada punto y desbloquearlo.",
-    "unlockToast": "Has descubierto {name}",
-    "rewardTitle": "Has completado tu ruta",
-    "rewardBody": "Torrevieja ya es un poco tuya. Canjea tu recompensa y llevate tu tarjeta de ruta."
+    "wakeEyebrow": "TORREVIEJA · SINFONÍA MEDITERRÁNEA",
+    "wakeLede": "La ciudad duerme.",
+    "welcomeTitle": "Tú eres quien la despierta",
+    "welcomeSubtitle": "Cada calle de Torrevieja tiene una nota. Dirige el mapa con las manos, como si fueras el único capaz de oírlas todas a la vez.",
+    "welcomeCta": "Despertar la ciudad",
+    "privacyTitle": "Tu cámara es tu batuta, no un archivo",
+    "privacyBody": "Usamos la cámara solo para leer el movimiento de tus manos y dirigir el mapa. La imagen se procesa en este dispositivo, nunca se envía ni se guarda. Si prefieres, puedes dirigir la sinfonía con el dedo.",
+    "privacyAccept": "Activar la batuta (cámara)",
+    "privacyFallback": "Dirigir con el dedo (sin cámara)",
+    "tutorialTitle": "Aprende a dirigir",
+    "tutorialSubtitle": "Tres gestos. Treinta segundos. Después, la ciudad es tuya.",
+    "tutorialSkip": "Ya sé dirigir, saltar",
+    "tutorialContinue": "Empezar a explorar",
+    "tutorialTouchTitle": "Tu ritual sin cámara",
+    "tutorialTouchBody": "Arrastra el mapa para moverte por la ciudad y pellizca con dos dedos (o usa la rueda) para acercarte a cada lugar. Cuando te detengas cerca de un punto, despertará.",
+    "tutorialTouchContinue": "Empezar a explorar",
+    "hintNoHands": "La ciudad espera. Levanta una mano frente a la cámara.",
+    "hintHandsIdle": "Te veo. Cierra el puño o pellizca para empezar a dirigir.",
+    "hintPanning": "Estás dirigiendo la ciudad. Muévete hacia un lugar.",
+    "hintZooming": "Te acercas. Sigue así hasta que el lugar despierte.",
+    "hintRotating": "Estás girando el mapa con ambas manos.",
+    "fallbackHint": "Arrastra el mapa y acércate a cada punto para despertarlo.",
+    "unlockToast": "{name} ha despertado",
+    "rewardEyebrow": "TU SINFONÍA HA TERMINADO",
+    "rewardTitle": "Torrevieja ya suena a ti",
+    "rewardBody": "Has dirigido tu propia ruta por la ciudad. Guarda tu partitura, canjéala en la Oficina de Turismo y compártela con quien quieras traer contigo.",
+    "artifactName": "Mi Sinfonía de Torrevieja"
   },
+  "gestureSteps": [
+    {
+      "id": "wake",
+      "hand": "left",
+      "title": "1 · Despertar",
+      "instruction": "Muestra la palma de tu mano izquierda a la cámara. Es la señal de que empiezas a dirigir.",
+      "confirmLabel": "Mano izquierda detectada"
+    },
+    {
+      "id": "direct",
+      "hand": "left",
+      "title": "2 · Dirigir",
+      "instruction": "Cierra el puño (o pellizca) con la mano izquierda y muévela: así paseas por la ciudad.",
+      "confirmLabel": "Dirigiendo el mapa"
+    },
+    {
+      "id": "unlock",
+      "hand": "right",
+      "title": "3 · Acercarte",
+      "instruction": "Cierra el puño (o pellizca) con la mano derecha y súbela o bájala para acercarte a un lugar hasta despertarlo.",
+      "confirmLabel": "Acercamiento activo"
+    }
+  ],
   "categories": [
     { "id": "playa", "label": "Playas", "emoji": "🏖️" },
     { "id": "natural", "label": "Naturaleza", "emoji": "🦩" },
     { "id": "cultura", "label": "Cultura", "emoji": "🏛️" },
-    { "id": "gastro", "label": "Gastronomia", "emoji": "🍤" }
+    { "id": "gastro", "label": "Gastronomía", "emoji": "🍤" }
   ],
   "pois": [
     {
@@ -52,7 +90,8 @@
       "emoji": "🦩",
       "lonLat": [-0.715, 38.005],
       "radiusM": 900,
-      "description": "La laguna de agua rosa mas famosa del Mediterraneo. Atardeceres irrepetibles y flamencos en libertad."
+      "note": "Nota: calma rosa al atardecer",
+      "description": "El agua se tiñe de rosa cuando el sol baja y los flamencos recogen el compás. Es la nota más silenciosa de la sinfonía: la que se escucha con los ojos."
     },
     {
       "id": "playa-del-cura",
@@ -61,16 +100,18 @@
       "emoji": "🏖️",
       "lonLat": [-0.6797, 37.9748],
       "radiusM": 500,
-      "description": "La playa urbana con mas ambiente: paseo, terrazas y bandera azul en pleno centro."
+      "note": "Nota: bandera azul en el centro",
+      "description": "El compás más animado de la ciudad: paseo, terrazas y arena a un paso del centro. Aquí la sinfonía sube de volumen."
     },
     {
       "id": "puerto-marina",
-      "name": "Puerto y Paseo Maritimo",
+      "name": "Puerto y Paseo Marítimo",
       "category": "gastro",
       "emoji": "⛵",
       "lonLat": [-0.6835, 37.9695],
       "radiusM": 550,
-      "description": "El corazon marinero: llegada de barcas, mercadillo del puerto y la mejor cocina del mar."
+      "note": "Nota: sal y mercadillo marinero",
+      "description": "Donde llegan las barcas y empiezan las historias de la mar. El puerto marca el ritmo: mercadillo, cocina marinera y la mejor luz de la tarde."
     },
     {
       "id": "museo-mar-sal",
@@ -79,7 +120,8 @@
       "emoji": "🏛️",
       "lonLat": [-0.6822, 37.9762],
       "radiusM": 450,
-      "description": "La historia salinera de la ciudad contada en primera persona. Entrada libre."
+      "note": "Nota: la memoria salinera",
+      "description": "La partitura antigua de Torrevieja: siglos de sal, barcos y oficio contados en primera persona. Entrada libre para quien quiera escuchar el origen."
     },
     {
       "id": "parque-molino-agua",
@@ -88,7 +130,8 @@
       "emoji": "🌲",
       "lonLat": [-0.662, 38.008],
       "radiusM": 700,
-      "description": "Dunas y pinada junto al mar: el pulmon verde entre Torrevieja y La Mata."
+      "note": "Nota: silencio verde junto al mar",
+      "description": "Dunas y pinada donde la ciudad baja la voz. El pulmón verde entre Torrevieja y La Mata, ideal para el compás lento."
     },
     {
       "id": "playa-la-mata",
@@ -97,23 +140,24 @@
       "emoji": "🌊",
       "lonLat": [-0.654, 38.029],
       "radiusM": 800,
-      "description": "Dos kilometros de arena dorada con espiritu local y chiringuitos legendarios."
+      "note": "Nota: dos kilómetros de arena dorada",
+      "description": "El final abierto de la sinfonía: arena dorada, chiringuitos legendarios y horizonte sin prisa."
     }
   ],
   "reward": {
     "threshold": 4,
     "type": "code",
-    "code": "VIVE-TORREVIEJA-26",
-    "message": "Canjea este codigo en la Oficina de Turismo y llevate el pack de bienvenida del destino.",
+    "code": "BATUTA-TORREVIEJA-26",
+    "message": "Presenta esta partitura en la Oficina de Turismo y llévate el pack de bienvenida del destino.",
     "ctaPrimary": {
-      "label": "Reservar mi experiencia",
+      "label": "Reservar mi próxima visita",
       "href": "https://turismodetorrevieja.com"
     },
     "ctaSecondary": {
-      "label": "Enviar por WhatsApp",
-      "href": "https://wa.me/?text=He%20completado%20la%20ruta%20Vive%20Torrevieja%20%F0%9F%A6%A9%20Mi%20codigo%3A%20VIVE-TORREVIEJA-26"
+      "label": "Compartir por WhatsApp",
+      "href": "https://wa.me/?text=He%20dirigido%20mi%20propia%20Sinfon%C3%ADa%20de%20Torrevieja%20%F0%9F%8E%BC%20Mi%20partitura%3A%20BATUTA-TORREVIEJA-26"
     },
-    "shareText": "He descubierto Torrevieja con las manos 🦩 Ruta completada en la Living Map Experience."
+    "shareText": "He dirigido mi propia Sinfonía de Torrevieja con las manos 🎼 Ruta completada en la Living Map Experience."
   },
   "display": {
     "kiosk": false,
@@ -121,6 +165,6 @@
   },
   "meta": {
     "status": "demo",
-    "notes": "Configuracion de demostracion con datos ficticios de campana. Coordenadas aproximadas reales de Torrevieja (Alicante)."
+    "notes": "v0.2 — narrativa 'La Batuta de la Ciudad'. Datos ficticios de campaña; coordenadas aproximadas reales de Torrevieja (Alicante)."
   }
 }

@@ -34,6 +34,10 @@ export interface LivingMapMapConfig {
 }
 
 export interface LivingMapNarrative {
+  /** Small eyebrow label above the hero title (e.g. "TORREVIEJA · MEDITERRÁNEO"). */
+  wakeEyebrow: string;
+  /** Poetic hook shown before the title, e.g. "La ciudad duerme." */
+  wakeLede: string;
   welcomeTitle: string;
   welcomeSubtitle: string;
   welcomeCta: string;
@@ -41,12 +45,40 @@ export interface LivingMapNarrative {
   privacyBody: string;
   privacyAccept: string;
   privacyFallback: string;
-  exploreHint: string;
+  /** Gesture tutorial screen. */
+  tutorialTitle: string;
+  tutorialSubtitle: string;
+  tutorialSkip: string;
+  tutorialContinue: string;
+  tutorialTouchTitle: string;
+  tutorialTouchBody: string;
+  tutorialTouchContinue: string;
+  /** Contextual hint shown while no hands are visible. */
+  hintNoHands: string;
+  /** Contextual hint shown when a hand is visible but idle (no gesture yet). */
+  hintHandsIdle: string;
+  /** Contextual hint shown while panning (moving). */
+  hintPanning: string;
+  /** Contextual hint shown while zooming. */
+  hintZooming: string;
+  /** Contextual hint shown while rotating. */
+  hintRotating: string;
   fallbackHint: string;
   /** May contain the {name} placeholder. */
   unlockToast: string;
+  rewardEyebrow: string;
   rewardTitle: string;
   rewardBody: string;
+  /** Name of the shareable artifact, e.g. "Mi Sinfonía de Torrevieja". */
+  artifactName: string;
+}
+
+export interface LivingMapGestureStep {
+  id: 'wake' | 'direct' | 'unlock';
+  hand: 'left' | 'right' | 'both';
+  title: string;
+  instruction: string;
+  confirmLabel: string;
 }
 
 export interface LivingMapCategory {
@@ -65,6 +97,8 @@ export interface LivingMapPoi {
   /** Unlock radius in meters around the POI. */
   radiusM: number;
   description: string;
+  /** Short evocative tagline shown above the description, e.g. "Nota: calma rosa". */
+  note?: string;
 }
 
 export interface LivingMapCta {
@@ -97,6 +131,7 @@ export interface LivingMapConfig {
   brand: LivingMapBrand;
   map: LivingMapMapConfig;
   narrative: LivingMapNarrative;
+  gestureSteps: LivingMapGestureStep[];
   categories: LivingMapCategory[];
   pois: LivingMapPoi[];
   reward: LivingMapReward;
